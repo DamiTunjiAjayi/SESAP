@@ -221,20 +221,81 @@
   <section id="maestro">
     <h2><span class="h2num">4</span>Maestro — the orchestration brain (BPMN)</h2>
     <p class="sub">The <code>TicketLifecycle</code> BPMN models the whole lifecycle. A start event, an <b>Action?</b> gateway that routes to the right branch, an <b>Actor route?</b> gateway (customer vs staff), AI classification, team routing, an <b>Auto-assignable?</b> risk gateway, the robot invocation, and five end states.</p>
-    <pre class="mermaid">
-%%{init: {'theme':'neutral','flowchart':{'nodeSpacing':28,'rankSpacing':34}}}%%
-flowchart TD
-  S([Ticket Submitted]) --> A{Action?}
-  A -->|new ticket| AR{Actor route?}
-  A -->|resolve| R[Resolve Ticket] --> RE([Resolved])
-  A -->|close| C[Close Ticket] --> CE([Closed])
-  A -->|escalate| E[Escalate Ticket] --> EE([Escalated])
-  AR -->|customer| CL[Classify Customer Request AI] --> RT[Route to Team]
-  AR -->|staff / admin| RT
-  RT --> AU{Auto-assignable?}
-  AU -->|high risk| MAN([Manual Assignment])
-  AU -->|auto-assign default| AS[Assign Ticket] --> ROB[Run Auto-Assign Robot] --> ASG([Assigned])
-    </pre>
+    <div class="diagram">
+      <svg viewBox="0 0 940 990" role="img" aria-label="TicketLifecycle BPMN flow">
+        <defs>
+          <marker id="mah" markerWidth="9" markerHeight="9" refX="7.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#8894a6"></path></marker>
+          <style>
+            .edge{stroke:#8894a6;stroke-width:1.6;fill:none}
+            .task{fill:#eef4fb;stroke:#9fb8d6;stroke-width:1.5}
+            .gw{fill:#fdf1da;stroke:#d6ad5c;stroke-width:1.5}
+            .start{fill:#e7f0fb;stroke:#0057b8;stroke-width:2}
+            .end{fill:#e3f3ea;stroke:#2f9e5f;stroke-width:1.5}
+            .t{font-family:system-ui,sans-serif;font-size:13px;fill:#0f1a2b;text-anchor:middle}
+            .tb{font-weight:700}
+            .te{fill:#146c39;font-weight:700}
+            .lbl{font-family:ui-monospace,Menlo,monospace;font-size:11px;fill:#33445a;text-anchor:middle}
+            .lblbg{fill:#f5f7fa}
+          </style>
+        </defs>
+
+        <!-- EDGES -->
+        <line class="edge" x1="455" y1="72" x2="455" y2="114" marker-end="url(#mah)"></line>
+        <!-- action -> lifecycle -->
+        <path class="edge" d="M430,178 C300,240 160,250 120,298" marker-end="url(#mah)"></path>
+        <path class="edge" d="M448,206 C380,250 320,255 292,298" marker-end="url(#mah)"></path>
+        <path class="edge" d="M470,206 C475,245 468,260 467,298" marker-end="url(#mah)"></path>
+        <!-- action -> new ticket -> actor -->
+        <path class="edge" d="M505,168 C600,215 660,240 690,268" marker-end="url(#mah)"></path>
+        <!-- lifecycle rect -> end -->
+        <line class="edge" x1="120" y1="352" x2="120" y2="408" marker-end="url(#mah)"></line>
+        <line class="edge" x1="292" y1="352" x2="292" y2="408" marker-end="url(#mah)"></line>
+        <line class="edge" x1="467" y1="352" x2="467" y2="408" marker-end="url(#mah)"></line>
+        <!-- actor -> classify (customer) / route (staff) -->
+        <path class="edge" d="M715,332 C685,370 670,388 662,406" marker-end="url(#mah)"></path>
+        <path class="edge" d="M792,300 C830,360 828,470 812,516" marker-end="url(#mah)"></path>
+        <!-- classify -> route -->
+        <path class="edge" d="M660,470 C690,495 700,502 722,518" marker-end="url(#mah)"></path>
+        <!-- route -> auto -->
+        <line class="edge" x1="742" y1="574" x2="742" y2="612" marker-end="url(#mah)"></line>
+        <!-- auto -> manual / assign -->
+        <path class="edge" d="M700,684 C660,720 645,738 636,758" marker-end="url(#mah)"></path>
+        <path class="edge" d="M786,684 C835,720 850,732 858,750" marker-end="url(#mah)"></path>
+        <!-- assign -> robot -> assigned -->
+        <line class="edge" x1="860" y1="806" x2="860" y2="838" marker-end="url(#mah)"></line>
+        <line class="edge" x1="860" y1="894" x2="860" y2="926" marker-end="url(#mah)"></line>
+
+        <!-- EDGE LABELS -->
+        <rect class="lblbg" x="238" y="238" width="58" height="17" rx="4"></rect><text class="lbl" x="267" y="250">resolve</text>
+        <rect class="lblbg" x="330" y="250" width="44" height="17" rx="4"></rect><text class="lbl" x="352" y="262">close</text>
+        <rect class="lblbg" x="440" y="250" width="60" height="17" rx="4"></rect><text class="lbl" x="470" y="262">escalate</text>
+        <rect class="lblbg" x="580" y="216" width="70" height="17" rx="4"></rect><text class="lbl" x="615" y="228">new ticket</text>
+        <rect class="lblbg" x="628" y="372" width="66" height="17" rx="4"></rect><text class="lbl" x="661" y="384">customer</text>
+        <rect class="lblbg" x="812" y="430" width="86" height="17" rx="4"></rect><text class="lbl" x="855" y="442">staff / admin</text>
+        <rect class="lblbg" x="588" y="712" width="60" height="17" rx="4"></rect><text class="lbl" x="618" y="724">high risk</text>
+        <rect class="lblbg" x="820" y="712" width="78" height="17" rx="4"></rect><text class="lbl" x="859" y="724">auto-assign</text>
+
+        <!-- NODES -->
+        <rect class="start" x="370" y="26" width="170" height="46" rx="23"></rect><text class="t tb" x="455" y="53">Ticket Submitted</text>
+        <polygon class="gw" points="455,116 511,160 455,204 399,160"></polygon><text class="t" x="455" y="164">Action?</text>
+
+        <rect class="task" x="45" y="300" width="150" height="52" rx="8"></rect><text class="t" x="120" y="330">Resolve Ticket</text>
+        <rect class="task" x="217" y="300" width="150" height="52" rx="8"></rect><text class="t" x="292" y="330">Close Ticket</text>
+        <rect class="task" x="392" y="300" width="150" height="52" rx="8"></rect><text class="t" x="467" y="330">Escalate Ticket</text>
+        <rect class="end" x="60" y="408" width="120" height="44" rx="22"></rect><text class="t te" x="120" y="434">Resolved</text>
+        <rect class="end" x="232" y="408" width="120" height="44" rx="22"></rect><text class="t te" x="292" y="434">Closed</text>
+        <rect class="end" x="407" y="408" width="120" height="44" rx="22"></rect><text class="t te" x="467" y="434">Escalated</text>
+
+        <polygon class="gw" points="742,254 800,300 742,346 684,300"></polygon><text class="t" x="742" y="304">Actor route?</text>
+        <rect class="task" x="562" y="406" width="196" height="60" rx="8"></rect><text class="t" x="660" y="431">Classify Customer</text><text class="t" x="660" y="449" style="font-size:11px;fill:#586576">Request · AI</text>
+        <rect class="task" x="667" y="518" width="150" height="54" rx="8"></rect><text class="t" x="742" y="549">Route to Team</text>
+        <polygon class="gw" points="742,612 802,660 742,708 682,660"></polygon><text class="t" x="742" y="658" style="font-size:12px">Auto-</text><text class="t" x="742" y="672" style="font-size:12px">assignable?</text>
+        <rect class="end" x="548" y="758" width="176" height="46" rx="23"></rect><text class="t te" x="636" y="785">Manual Assignment</text>
+        <rect class="task" x="790" y="754" width="140" height="52" rx="8"></rect><text class="t" x="860" y="784">Assign Ticket</text>
+        <rect class="task" x="790" y="838" width="140" height="56" rx="8"></rect><text class="t" x="860" y="862">Run Auto-Assign</text><text class="t" x="860" y="879" style="font-size:11px;fill:#586576">Robot · RPA</text>
+        <rect class="end" x="800" y="926" width="120" height="44" rx="22"></rect><text class="t te" x="860" y="952">Assigned</text>
+      </svg>
+    </div>
     <h3>Element by element</h3>
     <div class="tbl-card"><table>
       <thead><tr><th>Element</th><th>Type</th><th>What it does</th></tr></thead>
