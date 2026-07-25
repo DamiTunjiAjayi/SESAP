@@ -2,10 +2,12 @@
 
 Exported live from tenant `stanbgdgzsbd / DefaultTenant` via [`scripts/describe-entity.mjs`](../scripts/describe-entity.mjs). Re-verified live on 2026-07-25 — all 24 fields unchanged (`Ref` required+unique, `Subject` required).
 
-- **Entity name:** `Ticket`
+- **Entity name (logical):** `Ticket`  ·  **Display name (UI):** "Support Ticket"
 - **Entity id:** `ca14332a-0081-f111-b338-000d3ab4d3b7`
 - **Description:** "SESAP support tickets. New submissions land unassigned for triage."
 - **Field count:** 24 (19 business fields + 5 system fields)
+
+> The Data Fabric UI shows friendly **display names** (Reference, Sub‑category, Source Channel, Assigned Team, Source System…); the app/SDK uses the **logical names** in the tables below (Ref, SubCategory, Channel, Team, Source…). A live data export and UI screenshots live in [`docs/datafabric/`](datafabric/): **`Ticket_export.csv`** (16 records) plus the entity **Overview** (all fields) and **Data** (grid) views.
 
 ## Business fields
 
