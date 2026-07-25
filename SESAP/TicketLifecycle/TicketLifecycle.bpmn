@@ -10,12 +10,12 @@
   <bpmn:process id="Process_1" name="SESAP Ticket Lifecycle" isExecutable="true">
     <bpmn:extensionElements>
       <uipath:variables version="v1">
-        <uipath:inputOutput id="Action" name="Action" type="string" elementId="Event_start" default="submit" />
+        <uipath:inputOutput id="Action" name="Action" type="string" elementId="Event_start" />
         <uipath:inputOutput id="Ref" name="Ref" type="string" elementId="Event_start" />
-        <uipath:inputOutput id="ActorRole" name="ActorRole" type="string" elementId="Event_start" default="customer" />
+        <uipath:inputOutput id="ActorRole" name="ActorRole" type="string" elementId="Event_start" />
         <uipath:inputOutput id="Subject" name="Subject" type="string" elementId="Event_start" />
         <uipath:inputOutput id="Category" name="Category" type="string" elementId="Event_start" />
-        <uipath:inputOutput id="RiskLevel" name="RiskLevel" type="string" elementId="Event_start" default="Low" />
+        <uipath:inputOutput id="RiskLevel" name="RiskLevel" type="string" elementId="Event_start" />
         <uipath:inputOutput id="Priority" name="Priority" type="string" elementId="Event_start" />
         <uipath:inputOutput id="Team" name="Team" type="string" elementId="Event_start" />
         <uipath:inputOutput id="AutoAssignable" name="AutoAssignable" type="string" elementId="Event_start" />
