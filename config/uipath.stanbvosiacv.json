@@ -1,0 +1,8 @@
+{
+  "scope": "DataFabric.Schema.Read DataFabric.Data.Read DataFabric.Data.Write",
+  "clientId": "0985212d-d159-4dfb-a61f-0b0a83980e9d",
+  "orgName": "stanbvosiacv",
+  "tenantName": "DefaultTenant",
+  "baseUrl": "https://cloud.uipath.com",
+  "redirectUri": "https://stanbvosiacv.uipath.host/support-dashboard-damilare"
+}

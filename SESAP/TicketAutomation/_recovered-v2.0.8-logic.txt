@@ -1,0 +1,473 @@
+!This program cannot be run in DOS mode.
+`.reloc
+v4.0.30319
+#Strings
+Func`1
+UpdateEntityRecord`1
+VisualBasicReference`1
+Variable`1
+Nullable`1
+IEnumerable`1
+TextExpressionBase`1
+VisualBasicValue`1
+ForEach`1
+Literal`1
+Location`1
+ActivityAction`1
+Collection`1
+QueryEntityRecords`1
+DelegateInArgument`1
+OutArgument`1
+BackupSlot`1
+IList`1
+Activity`1
+Namespace_fcs0f70ds1
+Namespace_7f37k199u1
+IDictionary`2
+MapFilePathToActivity_93063903935340c8aab522ec692cb083
+Namespace_5gmehksd64
+<Module>
+set_TimeoutMS
+System.Private.CoreLib
+set_Cc
+set_Bcc
+SyncToDataFabric
+System.Collections.Generic
+set_Id
+set_RecordId
+set_ConnectionId
+set_EntityId
+set_QueriedEntityId
+get_out_Synced
+set_out_Synced
+get_out_AutoAssigned
+set_out_AutoAssigned
+set_IsRequired
+get_out_Escalated
+set_out_Escalated
+set_Elevated
+get_out_IsValid
+set_out_IsValid
+set_AuthScopesInvalid
+<out_Synced>k__BackingField
+<out_AutoAssigned>k__BackingField
+<out_Escalated>k__BackingField
+<out_IsValid>k__BackingField
+<in_Assignee>k__BackingField
+<out_Assignee>k__BackingField
+<out_ValidationMessage>k__BackingField
+<in_Stage>k__BackingField
+<in_ActorRole>k__BackingField
+<in_RecipientName>k__BackingField
+<in_NotificationType>k__BackingField
+<in_ResolutionNote>k__BackingField
+<in_OldValue>k__BackingField
+<in_NewValue>k__BackingField
+<in_Ref>k__BackingField
+<in_RiskLevel>k__BackingField
+<out_AssigneeEmail>k__BackingField
+<out_ManagerEmail>k__BackingField
+<in_RequesterEmail>k__BackingField
+<in_RecipientEmail>k__BackingField
+<in_Team>k__BackingField
+<out_Team>k__BackingField
+<in_Recommendation>k__BackingField
+<in_Action>k__BackingField
+<in_Reason>k__BackingField
+<in_AssignmentStatus>k__BackingField
+<out_NewStatus>k__BackingField
+<out_ResolvedAt>k__BackingField
+<in_Subject>k__BackingField
+<out_Sent>k__BackingField
+<out_AssignedCount>k__BackingField
+<out_MessageBody>k__BackingField
+<in_Summary>k__BackingField
+<IdRefDictionary>k__BackingField
+<ConstructorIdRefDictionary>k__BackingField
+<in_Category>k__BackingField
+<out_AuditEntry>k__BackingField
+<in_Priority>k__BackingField
+<in_CurrentPriority>k__BackingField
+<out_NewPriority>k__BackingField
+set_SortByField
+DynamicEntityField
+Replace
+set_UseConnectionService
+set_Importance
+MailImportance
+AssemblyReference
+Sequence
+IResource
+set_Code
+InvokeCode
+set_AttachmentInputMode
+get_in_Assignee
+set_in_Assignee
+get_out_Assignee
+set_out_Assignee
+set_UnSafe
+set_Message
+LogMessage
+get_out_ValidationMessage
+set_out_ValidationMessage
+get_in_Stage
+set_in_Stage
+set_Language
+NetLanguage
+set_ArgumentsVariable
+RuntimeTypeHandle
+GetTypeFromHandle
+InvokeWorkflowFile
+get_in_ActorRole
+set_in_ActorRole
+set_Name
+set_WorkflowFileName
+set_AssetName
+get_in_RecipientName
+set_in_RecipientName
+set_ConnectionAccountName
+set_DisplayName
+set_AssemblyName
+get_in_NotificationType
+set_in_NotificationType
+LogExitType
+set_InputType
+BodyInputType
+LogEntryType
+UiPath.DataService.Activities.Core
+set_Else
+ActivityDelegate
+set_State
+RecordState
+get_in_ResolutionNote
+set_in_ResolutionNote
+AssemblyMetadataAttribute
+CompilerGeneratedAttribute
+DebuggableAttribute
+BrowsableAttribute
+DisplayNameAttribute
+AssemblyFileVersionAttribute
+RefSafetyRulesAttribute
+CompilationRelaxationsAttribute
+CategoryAttribute
+RuntimeCompatibilityAttribute
+set_Value
+set_StoredValue
+get_in_OldValue
+set_in_OldValue
+set_ArgumentValue
+get_in_NewValue
+set_in_NewValue
+Namespace_qqlikzvx6f
+get_in_Ref
+set_in_Ref
+set_SortAscending
+UiPath.Platform.ResourceHandling
+GetString
+ConvertFromInvariantString
+WriteAuditLog
+Namespace_25jhoaheug
+relativePath
+UiPath
+set_FolderPath
+set_ExpansionDepth
+Namespace_s2mp4cx7oi
+System.Collections.ObjectModel
+System.ComponentModel
+set_Level
+LogLevel
+get_in_RiskLevel
+set_in_RiskLevel
+get_out_AssigneeEmail
+set_out_AssigneeEmail
+get_out_ManagerEmail
+set_out_ManagerEmail
+get_in_RequesterEmail
+set_in_RequesterEmail
+get_in_RecipientEmail
+set_in_RecipientEmail
+TicketAutomation.dll
+get_in_Team
+set_in_Team
+get_out_Team
+set_out_Team
+System
+UiPath.Platform
+CacheStrategyEnum
+TimeSpan
+set_Then
+Namespace_vwnre0qign
+Assign
+set_TargetSession
+InvokeWorkflowTargetSession
+set_Expression
+TextExpression
+SendNotification
+get_in_Recommendation
+set_in_Recommendation
+DataService.TicketAutomation
+TicketAutomation.Integration
+System.Activities.XamlIntegration
+set_Implementation
+SetNamespacesForImplementation
+SetReferencesForImplementation
+SetCompiledExpressionRootForImplementation
+GetImplementation
+get_in_Action
+set_in_Action
+System.Reflection
+set_Condition
+get_in_Reason
+set_in_Reason
+set_To
+set_ReplyTo
+GetCurrentJobInfo
+set_VisibleDynamicPropertiesInfo
+set_Skip
+set_Top
+set_InputTypeBackup
+set_AttachmentsBackup
+set_EvaluationOrder
+ResourceManager
+ManualTrigger
+CompiledExpressionInvoker
+set_Handler
+System.ComponentModel.TypeConverter
+GetConverter
+set_ContinueOnError
+InitFromConstructor
+TypeDescriptor
+set_TimeoutInMs
+System.Diagnostics
+set_SelectedFields
+set_TotalRecords
+set_OutputRecords
+System.Runtime.CompilerServices
+System.Resources
+TicketAutomation.Integration.SyncToDataFabric.resources
+TicketAutomation.Audit.WriteAuditLog.resources
+TicketAutomation.Main.resources
+TicketAutomation.Notifications.SendNotification.resources
+TicketAutomation.Helpers.ValidateTicket.resources
+TicketAutomation.Tickets.EscalateTicket.resources
+TicketAutomation.Tickets.ResolveTicket.resources
+TicketAutomation.Tickets.AssignTicket.resources
+DebuggingModes
+Microsoft.VisualBasic.Activities
+UiPath.Shared.Activities
+UiPath.DataService.Activities
+UiPath.Core.Activities
+UiPath.GSuite.Activities
+UiPath.System.Activities
+get_Activities
+get_Variables
+set_Values
+set_BackupValues
+set_FilterValues
+System.ComponentModel.Primitives
+BaseLeafConnectionServiceActivityWithoutBindings
+set_AttachmentPaths
+set_ArgumentAttachmentPaths
+UiPath.DataService.Activities.Models
+UiPath.Shared.Activities.Utils
+UiPath.GSuite.Activities.Gmail.Enums
+System.Activities.Expressions
+SyncToDataFabric_Expressions
+WriteAuditLog_Expressions
+Main_Expressions
+SendNotification_Expressions
+TicketAutomation_Expressions
+ValidateTicket_Expressions
+EscalateTicket_Expressions
+ResolveTicket_Expressions
+AssignTicket_Expressions
+TicketAutomation.Notifications
+SendEmailConnections
+set_Modifiers
+VariableModifiers
+TicketAutomation.Helpers
+TicketAutomation.Tickets
+System.Activities.Statements
+set_Attachments
+set_ArgumentAttachments
+set_Arguments
+set_FilterArguments
+get_in_AssignmentStatus
+set_in_AssignmentStatus
+get_out_NewStatus
+set_out_NewStatus
+get_out_ResolvedAt
+set_out_ResolvedAt
+Object
+get_in_Subject
+set_in_Subject
+set_Subject
+ValidateTicket
+EscalateTicket
+ResolveTicket
+AssignTicket
+GetRobotAsset
+set_SaveAsDraft
+TicketAutomation.Audit
+set_LogExit
+set_Result
+get_out_Sent
+set_out_Sent
+set_SingleAttachment
+set_Argument
+DelegateArgument
+InArgument
+FilterArgument
+OutArgument
+get_out_AssignedCount
+set_out_AssignedCount
+set_RequiredFieldCount
+ICompiledExpressionRoot
+set_Timeout
+set_ExpressionText
+set_InputEntityInFieldView
+set_IsInRecordView
+UiPath.Workflow
+set_Body
+get_out_MessageBody
+set_out_MessageBody
+set_TextBody
+set_CacheStrategy
+get_Assembly
+get_in_Summary
+set_in_Summary
+get_IdRefDictionary
+set_IdRefDictionary
+get_ConstructorIdRefDictionary
+set_ConstructorIdRefDictionary
+get_in_Category
+set_in_Category
+set_LogEntry
+get_out_AuditEntry
+set_out_AuditEntry
+op_Equality
+get_in_Priority
+set_in_Priority
+get_in_CurrentPriority
+set_in_CurrentPriority
+get_out_NewPriority
+set_out_NewPriority
+set_InputEntity
+set_OutputEntity
+ContinuableAsyncCodeActivity
+ExecutorInvokeActivity
+AsyncNativeActivity
+MapFilePathToActivity
+BaseAssetActivity
+GoogleBaseClientActivity
+BaseEntityActivity
+Namespace_g1sdz1rh8z
+WrapNonExceptionThrows
+2.0.8.0
+UiPathCompilerVersion
+26.0.197.0
+TicketAutomation
+TicketAutomation.Notifications
+SendNotification
+TicketAutomation.Audit
+WriteAuditLog
+TicketAutomation.Helpers
+ValidateTicket
+TicketAutomation.Tickets
+EscalateTicket
+ResolveTicket
+AssignTicket
+TicketAutomation.Integration
+SyncToDataFabric
+Output
+lSystem.Resources.ResourceReader, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089#System.Resources.RuntimeResourceSet
+PADPADP
+5allTickets.FirstOrDefault(Function(t) t.Ref = in_Ref)
+j"[SYNC] " + in_Ref + " -> assignee=" + in_Assignee + " team=" + in_Team + " status=" + in_AssignmentStatus
+6matched IsNot Nothing AndAlso matched.Id <> Guid.Empty
+New Ticket() With {.Id = matched.Id, .AssignedTo = in_Assignee, .Team = in_Team, .AssignmentStatus = in_AssignmentStatus, .Category = in_Category, .Priority = in_Priority, .SubCategory = in_Summary, .Tags = in_Recommendation}
+lSystem.Resources.ResourceReader, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089#System.Resources.RuntimeResourceSet
+PADPADP
+5allTickets.FirstOrDefault(Function(t) t.Ref = in_Ref)
+:New Ticket() With {.Id = matched.Id, .Priority = "urgent"}
+p"[ESCALATE] " + in_Ref + " priority -> urgent. Reason: " + in_Reason + ". Manager notified: " + out_ManagerEmail
+lSystem.Resources.ResourceReader, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089#System.Resources.RuntimeResourceSet
+PADPADP
+5allTickets.FirstOrDefault(Function(t) t.Ref = in_Ref)
+:New Ticket() With {.Id = matched.Id, .Status = "resolved"}
+c"[RESOLVE] " + in_Ref + " status -> resolved at " + out_ResolvedAt + ". Note: " + in_ResolutionNote
+lSystem.Resources.ResourceReader, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089#System.Resources.RuntimeResourceSet
+PADPADP
+9out_Assignee.ToLower().Replace(" ", ".") + "@example.com"
+D"[ASSIGN] " + in_Ref + " -> " + out_Assignee + " (" + out_Team + ")"
+P"[ASSIGN] " + in_Ref + " requires MANUAL assignment (risk=" + in_RiskLevel + ")"
+If(in_Category = "Payments", "Payments Operations", If(in_Category = "Digital Banking", "Tier 2 Support", If(in_Category = "Automation / RPA", "Automation Team", If(in_Category = "Infrastructure", "Infrastructure", "Tier 1 Support"))))
+If(out_Team = "Payments Operations", "Ngozi Eze", If(out_Team = "Tier 2 Support", "Kunle Adeyemi", If(out_Team = "Automation Team", "Chidi Okonkwo", If(out_Team = "Infrastructure", "Fatima Sani", "Tobi Martins"))))
+lSystem.Resources.ResourceReader, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089#System.Resources.RuntimeResourceSet
+PADPADP
+{If(hasRef AndAlso hasSubject, "Valid", "Missing required field: " + If(hasRef, "", "Ref ") + If(hasSubject, "", "Subject"))
+7"[VALIDATE] " + in_Ref + " -> " + out_ValidationMessageV
+lSystem.Resources.ResourceReader, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089#System.Resources.RuntimeResourceSet
+PADPADP
+DateTime.UtcNow.ToString("o") + " | " + in_Ref + " | " + in_Action + " | actor=" + in_ActorRole + " | " + in_OldValue + " -> " + in_NewValue
+lSystem.Resources.ResourceReader, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089#System.Resources.RuntimeResourceSet
+PADPADP
+zIf(in_Stage = "escalated", "#b91c1c", If(in_Stage = "resolved", "#16a34a", If(in_Stage = "closed", "#64748b", "#0057b8")))
+}If(in_Stage = "escalated", "Escalated", If(in_Stage = "resolved", "Resolved", If(in_Stage = "closed", "Closed", "Received")))
+If(in_Stage = "escalated", "Your ticket has been escalated", If(in_Stage = "resolved", "Your ticket has been resolved", If(in_Stage = "closed", "Your ticket has been closed", "We have received your ticket")))
+If(in_Stage = "escalated", "This ticket has been escalated for priority handling and is receiving urgent attention.", If(in_Stage = "resolved", "Good news - your ticket has been resolved. If the issue persists, reply to this email to reopen it.", If(in_Stage = "closed", "Your ticket is now closed. Thank you for using Stanbic IBTC support.", "Thanks for contacting Stanbic IBTC support. Your ticket has been logged and will be triaged shortly.")))
+9"[SESAP] Lifecycle email: " + in_Stage + " for " + in_Ref
+vNew String(){If(String.IsNullOrEmpty(in_RequesterEmail), "damilaretunjiajayi+requester@gmail.com", in_RequesterEmail)}
+"<div style='font-family:Segoe UI,Arial,sans-serif;max-width:540px;margin:0 auto;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;background:#ffffff'><div style='background:" + accent + ";color:#ffffff;padding:18px 22px'><div style='font-size:18px;font-weight:700'>Stanbic IBTC  |  SESAP</div><div style='font-size:12px;opacity:0.85;margin-top:2px'>Enterprise Support and Automation</div></div><div style='padding:24px 22px'><span style='display:inline-block;background:#f1f5f9;color:#334155;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;margin-bottom:12px'>" + badge + "</span><div style='font-size:17px;font-weight:600;color:#111827;margin-bottom:8px'>" + headline + "</div><div style='font-size:14px;color:#4b5563;line-height:1.5;margin-bottom:18px'>" + intro + "</div><table style='width:100%;font-size:13px;color:#374151;border-collapse:collapse'><tr><td style='padding:8px 0;color:#9ca3af;width:120px'>Ticket</td><td style='padding:8px 0;font-weight:600'>" + in_Ref + "</td></tr><tr><td style='padding:8px 0;color:#9ca3af'>Subject</td><td style='padding:8px 0'>" + in_Subject + "</td></tr><tr><td style='padding:8px 0;color:#9ca3af'>Priority</td><td style='padding:8px 0'><span style='background:#fff7ed;color:#c2410c;padding:2px 9px;border-radius:20px;font-size:12px'>" + in_Priority + "</span></td></tr></table><div style='margin-top:22px'><a href='https://stanbgdgzsbd.uipath.host/sesap-support-platform?ticket=" + in_Ref + "' style='display:inline-block;background:" + accent + ";color:#ffffff;text-decoration:none;padding:11px 22px;border-radius:8px;font-size:13px;font-weight:600'>Open ticket in SESAP</a></div></div><div style='background:#f8fafc;border-top:1px solid #eef2f7;padding:14px 22px;font-size:11px;color:#94a3b8'>Automated by SESAP  -  UiPath Orchestration.</div></div>"
+YNew String(){"damilaretunjiajayi+" + in_Assignee.Split(" "c)(0).ToLower() + "@gmail.com"}
+I"[SESAP] Loaded " + totalCount.ToString() + " ticket(s) from Data Fabric"
+Dim pr As String = "You are a bank support-desk triage agent. Read the ticket and reply with ONLY minified JSON (no prose, no code fence) with keys: category (one of Payments, Digital Banking, Automation / RPA, Infrastructure, General), priority (one of low, medium, high, urgent), summary (max 18 words), recommendation (max 22 words). Subject: " & in_Subject & " Description: " & in_Description
+Dim ro As New Newtonsoft.Json.Linq.JObject()
+ro("model") = "claude-haiku-4-5-20251001"
+ro("max_tokens") = 300
+Dim ar As New Newtonsoft.Json.Linq.JArray()
+Dim mo As New Newtonsoft.Json.Linq.JObject()
+mo("role") = "user"
+mo("content") = pr
+ar.Add(mo)
+ro("messages") = ar
+Dim cl As New System.Net.Http.HttpClient()
+cl.Timeout = TimeSpan.FromSeconds(90)
+Dim rq As New System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Post, "https://api.anthropic.com/v1/messages")
+rq.Headers.TryAddWithoutValidation("x-api-key", in_ApiKey)
+rq.Headers.TryAddWithoutValidation("anthropic-version", "2023-06-01")
+rq.Content = New System.Net.Http.StringContent(ro.ToString(), System.Text.Encoding.UTF8, "application/json")
+Dim rs = cl.SendAsync(rq).Result
+Dim bs As String = rs.Content.ReadAsStringAsync().Result
+Dim rt = Newtonsoft.Json.Linq.JObject.Parse(bs)
+Dim tx As String = rt("content")(0)("text").ToString()
+Dim ia As Integer = tx.IndexOf("{")
+Dim ib As Integer = tx.LastIndexOf("}")
+Dim jr = Newtonsoft.Json.Linq.JObject.Parse(tx.Substring(ia, ib - ia + 1))
+out_Category = jr("category").ToString()
+out_Priority = jr("priority").ToString().ToLower()
+out_Summary = jr("summary").ToString()
+out_Recommendation = jr("recommendation").ToString()
+Catch ex As Exception
+out_Category = in_Fallback
+out_Priority = "medium"
+out_Summary = "AI triage unavailable"
+out_Recommendation = ""
+End Try
+S"[SESAP][AI] " + t.Ref + " -> " + aiCategory + "/" + aiPriority + " : " + aiSummary
+<If(String.IsNullOrEmpty(aiCategory), t.Category, aiCategory)
+<If(String.IsNullOrEmpty(aiPriority), t.Priority, aiPriority)
+If(t.Category = "Payments", "Payments Operations", If(t.Category = "Digital Banking", "Tier 2 Support", If(t.Category = "Automation / RPA", "Automation Team", If(t.Category = "Infrastructure", "Infrastructure", "Tier 1 Support"))))
+If(team = "Payments Operations", "Ngozi Eze", If(team = "Tier 2 Support", "Kunle Adeyemi", If(team = "Automation Team", "Chidi Okonkwo", If(team = "Infrastructure", "Fatima Sani", "Tobi Martins"))))
+:"[SESAP] " + t.Ref + " -> " + assignee + " (" + team + ")"
+tNew String(){If(String.IsNullOrEmpty(t.RequesterEmail), "damilaretunjiajayi+requester@gmail.com", t.RequesterEmail)}
+"<div style='font-family:Segoe UI,Arial,sans-serif;max-width:540px;margin:0 auto;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;background:#ffffff'><div style='background:#0057b8;color:#ffffff;padding:18px 22px'><div style='font-size:18px;font-weight:700;letter-spacing:0.2px'>Stanbic IBTC  |  SESAP</div><div style='font-size:12px;opacity:0.85;margin-top:2px'>Enterprise Support and Automation</div></div><div style='padding:24px 22px'><span style='display:inline-block;background:#eef2ff;color:#0057b8;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;margin-bottom:12px'>Update</span><div style='font-size:17px;font-weight:600;color:#111827;margin-bottom:8px'>Your ticket has been assigned</div><div style='font-size:14px;color:#4b5563;line-height:1.5;margin-bottom:18px'>Thanks for contacting Stanbic IBTC support. Your request is now with a specialist and is being worked on. We will keep you posted.</div><table style='width:100%;font-size:13px;color:#374151;border-collapse:collapse'><tr><td style='padding:8px 0;color:#9ca3af;width:120px;vertical-align:top'>Ticket</td><td style='padding:8px 0;font-weight:500'>" + t.Ref + "</td></tr><tr><td style='padding:8px 0;color:#9ca3af;width:120px;vertical-align:top'>Subject</td><td style='padding:8px 0;font-weight:500'>" + t.Subject + "</td></tr><tr><td style='padding:8px 0;color:#9ca3af;width:120px;vertical-align:top'>Assigned to</td><td style='padding:8px 0;font-weight:500'>" + assignee + " - " + team + "</td></tr><tr><td style='padding:8px 0;color:#9ca3af;width:120px;vertical-align:top'>Priority</td><td style='padding:8px 0;font-weight:500'><span style='background:#fff7ed;color:#c2410c;padding:2px 9px;border-radius:20px;font-size:12px'>" + t.Priority + "</span></td></tr></table><div style='margin-top:22px'><a href='https://stanbgdgzsbd.uipath.host/sesap-support-platform?ticket=" + t.Ref + "' style='display:inline-block;background:#0057b8;color:#ffffff;text-decoration:none;padding:11px 22px;border-radius:8px;font-size:13px;font-weight:600'>Open ticket in SESAP</a></div></div><div style='background:#f8fafc;border-top:1px solid #eef2f7;padding:14px 22px;font-size:11px;color:#94a3b8'>Automated by SESAP  -  UiPath Orchestration. Please do not reply to this message.</div></div>"
+VNew String(){"damilaretunjiajayi+" + assignee.Split(" "c)(0).ToLower() + "@gmail.com"}
+"<div style='font-family:Segoe UI,Arial,sans-serif;max-width:540px;margin:0 auto;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;background:#ffffff'><div style='background:#0f766e;color:#ffffff;padding:18px 22px'><div style='font-size:18px;font-weight:700;letter-spacing:0.2px'>Stanbic IBTC  |  SESAP</div><div style='font-size:12px;opacity:0.85;margin-top:2px'>Enterprise Support and Automation</div></div><div style='padding:24px 22px'><span style='display:inline-block;background:#eef2ff;color:#0f766e;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;margin-bottom:12px'>Action needed</span><div style='font-size:17px;font-weight:600;color:#111827;margin-bottom:8px'>A new ticket has been assigned to you</div><div style='font-size:14px;color:#4b5563;line-height:1.5;margin-bottom:18px'>You have been assigned a new support ticket. Please review the details and action it in the SESAP workspace.</div><table style='width:100%;font-size:13px;color:#374151;border-collapse:collapse'><tr><td style='padding:8px 0;color:#9ca3af;width:120px;vertical-align:top'>Ticket</td><td style='padding:8px 0;font-weight:500'>" + t.Ref + "</td></tr><tr><td style='padding:8px 0;color:#9ca3af;width:120px;vertical-align:top'>Subject</td><td style='padding:8px 0;font-weight:500'>" + t.Subject + "</td></tr><tr><td style='padding:8px 0;color:#9ca3af;width:120px;vertical-align:top'>Requester</td><td style='padding:8px 0;font-weight:500'>" + t.Requester + "</td></tr><tr><td style='padding:8px 0;color:#9ca3af;width:120px;vertical-align:top'>Priority</td><td style='padding:8px 0;font-weight:500'><span style='background:#fff7ed;color:#c2410c;padding:2px 9px;border-radius:20px;font-size:12px'>" + t.Priority + "</span></td></tr></table><div style='margin-top:22px'><a href='https://stanbgdgzsbd.uipath.host/sesap-support-platform?ticket=" + t.Ref + "' style='display:inline-block;background:#0f766e;color:#ffffff;text-decoration:none;padding:11px 22px;border-radius:8px;font-size:13px;font-weight:600'>Open ticket in SESAP</a></div></div><div style='background:#f8fafc;border-top:1px solid #eef2f7;padding:14px 22px;font-size:11px;color:#94a3b8'>Automated by SESAP  -  UiPath Orchestration.</div></div>"
+X"[SESAP] Auto-assign complete. Assigned " + out_AssignedCount.ToString() + " ticket(s)."
+lSystem.Resources.ResourceReader, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089#System.Resources.RuntimeResourceSet
+PADPADP
+"Hello " + in_RecipientName + "," + Environment.NewLine + Environment.NewLine + "Notification (" + in_NotificationType + ") for ticket " + in_Ref + ": " + in_Subject + Environment.NewLine + Environment.NewLine + "Please review this ticket in SESAP." + Environment.NewLine + "- SESAP Automated Notification"
+"[NOTIFY] to=" + in_RecipientEmail + " type=" + in_NotificationType + " ref=" + in_Ref + " | body prepared (" + out_MessageBody.Length.ToString() + " chars). To enable live email, add a Send Mail activity + mail connection here."
+_CorDllMain
+mscoree.dll

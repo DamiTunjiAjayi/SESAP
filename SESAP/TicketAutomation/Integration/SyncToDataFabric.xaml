@@ -1,0 +1,160 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="SyncToDataFabric" mva:VisualBasic.Settings="{x:Null}"
+xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
+xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"
+xmlns:uda="clr-namespace:UiPath.DataService.Activities;assembly=UiPath.DataService.Activities.Core"
+xmlns:udam="clr-namespace:UiPath.DataService.Activities.Models;assembly=UiPath.DataService.Activities.Core"
+xmlns:local="clr-namespace:TicketAutomation;assembly=DataService.TicketAutomation"
+xmlns:ui="http://schemas.uipath.com/workflow/activities"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <x:Members>
+        <x:Property Name="in_Ref" Type="InArgument(x:String)" />
+        <x:Property Name="in_Assignee" Type="InArgument(x:String)" />
+        <x:Property Name="in_Team" Type="InArgument(x:String)" />
+        <x:Property Name="in_AssignmentStatus" Type="InArgument(x:String)" />
+        <x:Property Name="in_Category" Type="InArgument(x:String)" />
+        <x:Property Name="in_Priority" Type="InArgument(x:String)" />
+        <x:Property Name="in_Summary" Type="InArgument(x:String)" />
+        <x:Property Name="in_Recommendation" Type="InArgument(x:String)" />
+        <x:Property Name="out_Synced" Type="OutArgument(x:Boolean)" />
+    </x:Members>
+    <TextExpression.NamespacesForImplementation>
+        <sco:Collection x:TypeArguments="x:String">
+            <x:String>System.Activities</x:String>
+            <x:String>System.Activities.Statements</x:String>
+            <x:String>Microsoft.VisualBasic</x:String>
+            <x:String>Microsoft.VisualBasic.Activities</x:String>
+            <x:String>System</x:String>
+            <x:String>System.Collections.Generic</x:String>
+            <x:String>System.Linq</x:String>
+            <x:String>UiPath.DataService.Activities</x:String>
+            <x:String>TicketAutomation</x:String>
+        </sco:Collection>
+    </TextExpression.NamespacesForImplementation>
+    <TextExpression.ReferencesForImplementation>
+        <sco:Collection x:TypeArguments="AssemblyReference">
+            <AssemblyReference>System.Activities</AssemblyReference>
+            <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+            <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+            <AssemblyReference>mscorlib</AssemblyReference>
+            <AssemblyReference>System</AssemblyReference>
+            <AssemblyReference>System.Linq</AssemblyReference>
+            <AssemblyReference>UiPath.DataService.Activities.Core</AssemblyReference>
+            <AssemblyReference>DataService.TicketAutomation</AssemblyReference>
+            <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+        </sco:Collection>
+    </TextExpression.ReferencesForImplementation>
+    <Sequence DisplayName="Sync To Data Fabric" sap2010:WorkflowViewState.IdRef="Sequence_Sync">
+        <Sequence.Variables>
+            <Variable x:TypeArguments="scg:IList(local:Ticket)" Name="allTickets" />
+            <Variable x:TypeArguments="x:Int64" Name="totalCount" />
+            <Variable x:TypeArguments="local:Ticket" Name="matched" />
+        </Sequence.Variables>
+        <sap2010:WorkflowViewState.ViewStateManager>
+            <sap2010:ViewStateManager />
+        </sap2010:WorkflowViewState.ViewStateManager>
+        <uda:QueryEntityRecords x:TypeArguments="local:Ticket"
+            ContinueOnError="False"
+            DisplayName="Query Ticket Records"
+            EntityId="ca14332a-0081-f111-b338-000d3ab4d3b7"
+            ExpansionDepth="1"
+            Top="1000"
+            Skip="0"
+            SortAscending="True"
+            OutputRecords="[allTickets]"
+            TotalRecords="[totalCount]"
+            TimeoutInMs="30000" />
+        <Assign sap2010:WorkflowViewState.IdRef="Assign_Match">
+            <Assign.To>
+                <OutArgument x:TypeArguments="local:Ticket">[matched]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+                <InArgument x:TypeArguments="local:Ticket">[allTickets.FirstOrDefault(Function(t) t.Ref = in_Ref)]</InArgument>
+            </Assign.Value>
+        </Assign>
+        <ui:LogMessage sap2010:WorkflowViewState.IdRef="Log_Sync" Level="Info" Message="[&quot;[SYNC] &quot; + in_Ref + &quot; -&gt; assignee=&quot; + in_Assignee + &quot; team=&quot; + in_Team + &quot; status=&quot; + in_AssignmentStatus]" />
+        <If Condition="[matched IsNot Nothing AndAlso matched.Id &lt;&gt; Guid.Empty]" sap2010:WorkflowViewState.IdRef="If_Matched">
+            <If.Then>
+                <Sequence DisplayName="Update matched ticket" sap2010:WorkflowViewState.IdRef="Seq_Update">
+                    <uda:UpdateEntityRecord x:TypeArguments="local:Ticket"
+                        OutputEntity="{x:Null}"
+                        VisibleDynamicPropertiesInfo="{x:Null}"
+                        ContinueOnError="False"
+                        DisplayName="Update Ticket Record"
+                        EntityId="ca14332a-0081-f111-b338-000d3ab4d3b7"
+                        ExpansionDepth="1"
+                        RecordId="[matched.Id]"
+                        InputEntityInFieldView="[New Ticket() With {.Id = matched.Id, .AssignedTo = in_Assignee, .Team = in_Team, .AssignmentStatus = in_AssignmentStatus, .Category = in_Category, .Priority = in_Priority, .SubCategory = in_Summary, .Tags = in_Recommendation}]"
+                        IsInRecordView="[False]"
+                        TimeoutInMs="30000">
+                        <uda:UpdateEntityRecord.State>
+                            <udam:RecordState IsInRecordView="False" RequiredFieldCount="0">
+                                <udam:RecordState.SelectedFields>
+                                    <scg:List x:TypeArguments="udam:DynamicEntityField">
+                                        <udam:DynamicEntityField Id="e214332a-0081-f111-b338-000d3ab4d3b7" IsRequired="False" Name="AssignedTo">
+                                            <udam:DynamicEntityField.ArgumentValue>
+                                                <InArgument x:TypeArguments="x:String">[in_Assignee]</InArgument>
+                                            </udam:DynamicEntityField.ArgumentValue>
+                                        </udam:DynamicEntityField>
+                                        <udam:DynamicEntityField Id="dd14332a-0081-f111-b338-000d3ab4d3b7" IsRequired="False" Name="Team">
+                                            <udam:DynamicEntityField.ArgumentValue>
+                                                <InArgument x:TypeArguments="x:String">[in_Team]</InArgument>
+                                            </udam:DynamicEntityField.ArgumentValue>
+                                        </udam:DynamicEntityField>
+                                        <udam:DynamicEntityField Id="e314332a-0081-f111-b338-000d3ab4d3b7" IsRequired="False" Name="AssignmentStatus">
+                                            <udam:DynamicEntityField.ArgumentValue>
+                                                <InArgument x:TypeArguments="x:String">[in_AssignmentStatus]</InArgument>
+                                            </udam:DynamicEntityField.ArgumentValue>
+                                        </udam:DynamicEntityField>
+                                        <udam:DynamicEntityField Id="d914332a-0081-f111-b338-000d3ab4d3b7" IsRequired="False" Name="Category">
+                                            <udam:DynamicEntityField.ArgumentValue>
+                                                <InArgument x:TypeArguments="x:String">[in_Category]</InArgument>
+                                            </udam:DynamicEntityField.ArgumentValue>
+                                        </udam:DynamicEntityField>
+                                        <udam:DynamicEntityField Id="e014332a-0081-f111-b338-000d3ab4d3b7" IsRequired="False" Name="Priority">
+                                            <udam:DynamicEntityField.ArgumentValue>
+                                                <InArgument x:TypeArguments="x:String">[in_Priority]</InArgument>
+                                            </udam:DynamicEntityField.ArgumentValue>
+                                        </udam:DynamicEntityField>
+                                        <udam:DynamicEntityField Id="da14332a-0081-f111-b338-000d3ab4d3b7" IsRequired="False" Name="SubCategory">
+                                            <udam:DynamicEntityField.ArgumentValue>
+                                                <InArgument x:TypeArguments="x:String">[in_Summary]</InArgument>
+                                            </udam:DynamicEntityField.ArgumentValue>
+                                        </udam:DynamicEntityField>
+                                        <udam:DynamicEntityField Id="e414332a-0081-f111-b338-000d3ab4d3b7" IsRequired="False" Name="Tags">
+                                            <udam:DynamicEntityField.ArgumentValue>
+                                                <InArgument x:TypeArguments="x:String">[in_Recommendation]</InArgument>
+                                            </udam:DynamicEntityField.ArgumentValue>
+                                        </udam:DynamicEntityField>
+                                    </scg:List>
+                                </udam:RecordState.SelectedFields>
+                            </udam:RecordState>
+                        </uda:UpdateEntityRecord.State>
+                    </uda:UpdateEntityRecord>
+                    <Assign sap2010:WorkflowViewState.IdRef="Assign_SyncedTrue">
+                        <Assign.To>
+                            <OutArgument x:TypeArguments="x:Boolean">[out_Synced]</OutArgument>
+                        </Assign.To>
+                        <Assign.Value>
+                            <InArgument x:TypeArguments="x:Boolean">True</InArgument>
+                        </Assign.Value>
+                    </Assign>
+                </Sequence>
+            </If.Then>
+            <If.Else>
+                <Assign sap2010:WorkflowViewState.IdRef="Assign_SyncedFalse">
+                    <Assign.To>
+                        <OutArgument x:TypeArguments="x:Boolean">[out_Synced]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                        <InArgument x:TypeArguments="x:Boolean">False</InArgument>
+                    </Assign.Value>
+                </Assign>
+            </If.Else>
+        </If>
+    </Sequence>
+</Activity>

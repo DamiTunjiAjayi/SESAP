@@ -1,0 +1,61 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Main"
+ xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+ xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
+ xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+ xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+ xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <TextExpression.NamespacesForImplementation>
+    <scg:List x:TypeArguments="x:String" Capacity="6">
+      <x:String>System</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Linq</x:String>
+    </scg:List>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <scg:List x:TypeArguments="AssemblyReference" Capacity="6">
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+    </scg:List>
+  </TextExpression.ReferencesForImplementation>
+
+  <Sequence DisplayName="SESAP · New Ticket → Data Fabric (Unassigned)" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <sap2010:WorkflowViewState.ViewStateManager>
+      <sap2010:ViewStateManager />
+    </sap2010:WorkflowViewState.ViewStateManager>
+
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="in_QueueName" Default="&quot;SESAP_NewTickets&quot;" />
+      <Variable x:TypeArguments="x:String" Name="Ref" />
+      <Variable x:TypeArguments="x:String" Name="Subject" />
+      <Variable x:TypeArguments="x:String" Name="Description" />
+      <Variable x:TypeArguments="x:String" Name="Requester" />
+      <Variable x:TypeArguments="x:String" Name="RequesterEmail" />
+      <Variable x:TypeArguments="x:String" Name="Category" />
+      <Variable x:TypeArguments="x:String" Name="Priority" />
+      <Variable x:TypeArguments="x:String" Name="BusinessService" />
+      <Variable x:TypeArguments="x:String" Name="AssignmentStatus" Default="&quot;Unassigned&quot;" />
+    </Sequence.Variables>
+
+    <!-- ================================================================
+         STARTER SKELETON — open in UiPath Studio and complete the steps
+         below. The Data Service (Data Fabric) and Queue activities bind to
+         YOUR tenant's Entity/Queue via dropdowns, so they are added in
+         Studio (they cannot be authored offline). Each WriteLine documents
+         the exact activity + properties to drop in. See UIPATH_INTEGRATION.md.
+         ================================================================ -->
+
+    <WriteLine Text="STEP 1 — Add [Get Transaction Item] (UiPath.Core.Activities). QueueName = in_QueueName. Output → TransactionItem (QueueItem). If it returns Nothing, End (no work)." />
+
+    <WriteLine Text="STEP 2 — From TransactionItem.SpecificContent read fields with e.g. Ref = TransactionItem.SpecificContent(&quot;Ref&quot;).ToString(). Assign into the variables declared above (Ref, Subject, Description, Requester, RequesterEmail, Category, Priority, BusinessService). AssignmentStatus stays 'Unassigned'." />
+
+    <WriteLine Text="STEP 3 — Add [Create Entity Record] (UiPath.DataService.Activities). Entity = Ticket. Map fields: Ref, Subject, Description, Requester, RequesterEmail, Category, Priority, BusinessService, Status='open', AssignedTo=(leave empty / Nothing), AssignmentStatus='Unassigned', Source='SESAP', CreatedAt=Now. Output → NewRecord." />
+
+    <WriteLine Text="STEP 4 — Add [Set Transaction Status] (UiPath.Core.Activities). TransactionItem = TransactionItem, Status = Successful. (In the Catch, set Status = Failed with the exception for auto-retry.)" />
+
+    <WriteLine Text="STEP 5 — Wrap STEPS 1-4 in a [Try Catch]. Catch System.Exception → [Set Transaction Status]=Failed (ErrorType=ApplicationException) so Orchestrator retries per the queue's max-retries policy." />
+
+    <WriteLine Text="[SESAP] Placeholder run complete. Replace these WriteLine steps with the activities above." />
+  </Sequence>
+</Activity>

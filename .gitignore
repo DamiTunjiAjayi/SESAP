@@ -1,0 +1,16 @@
+node_modules
+dist
+*.local
+.DS_Store
+
+# UiPath build caches / packaged artifacts
+.uipath
+**/.bak
+
+# Demo prop (fictional specimen ID — not part of the solution)
+SPECIMEN-id-demo.png
+
+# Local scratch
+scratchpad
+tmp
+*.log

@@ -1,0 +1,39 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "TicketLifecycle",
+    "kind": "process",
+    "type": "processOrchestration",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "9bfffca7-ce01-4af3-9256-da6ad7e2412c",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "TicketLifecycle"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "ProcessOrchestration",
+      "name": "TicketLifecycle",
+      "package": {
+        "key": "fb2d990d-f9d6-4c87-8324-2049dd6e1ee8"
+      },
+      "packageName": "SESAP.agentic.TicketLifecycle",
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180
+    },
+    "locks": [],
+    "key": "4a30fb9b-e7c6-4c7e-bb61-a8d111e5dc9f",
+    "files": []
+  }
+}

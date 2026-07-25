@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /Users/damilare/Documents/CODINGAGENTUIpath status)",
+      "Bash(npm -v)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(curl -s http://localhost:5173/)",
+      "Bash(curl -s http://localhost:5173/src/main.jsx)",
+      "Bash([ -s \"$OUT\" ])",
+      "Bash(break)"
+    ]
+  }
+}

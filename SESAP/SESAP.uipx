@@ -1,0 +1,17 @@
+{
+    "DocVersion": "1.0.0",
+    "StudioMinVersion": "2025.10.0",
+    "SolutionId": "71ab7141-535f-4036-e0de-08dee3311b11",
+    "Projects": [
+        {
+            "Type": "processOrchestration",
+            "ProjectRelativePath": "TicketLifecycle/project.uiproj",
+            "Id": "9bfffca7-ce01-4af3-9256-da6ad7e2412c"
+        },
+        {
+            "Type": "Process",
+            "ProjectRelativePath": "TicketAutomation/project.uiproj",
+            "Id": "99eb9089-91f6-4a3a-b7c8-e3c29bd6384b"
+        }
+    ]
+}

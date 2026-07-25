@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "TicketAutomation",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "99eb9089-91f6-4a3a-b7c8-e3c29bd6384b",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "TicketAutomation"
+    },
+    "locks": [],
+    "key": "bf93342e-ab57-42f1-b85d-8676b81e2d2d",
+    "files": []
+  }
+}

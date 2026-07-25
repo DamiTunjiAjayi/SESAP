@@ -1,0 +1,6 @@
+{
+  "Name": "TicketAutomation",
+  "ProjectType": "Process",
+  "Description": "SESAP RPA workflows supporting the Ticket Lifecycle BPMN",
+  "MainFile": "Main.xaml"
+}

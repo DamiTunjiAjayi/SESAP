@@ -1,0 +1,382 @@
+<title>SESAP — Architecture, Setup &amp; Submission README</title>
+<style>
+  /* Official document — committed light theme (no dark mode by design). */
+  :root{
+    --bg:#f5f7fa; --surface:#ffffff; --surface-2:#eef2f7; --surface-3:#e4ebf3;
+    --ink:#0f1a2b; --ink-2:#26364b; --muted:#586576; --line:#d7dfea;
+    --accent:#0057b8; --accent-2:#0a68d0; --accent-soft:#e7f0fb; --on-accent:#ffffff;
+    --bonus:#8a5200; --bonus-soft:#fbeeda;
+    --good:#137a3a; --good-soft:#e2f2e8; --warn:#a5590a; --crit:#b3261e;
+    --radius:14px; --maxw:920px;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans);
+    line-height:1.62; font-size:16.5px; letter-spacing:-.004em; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 22px 100px}
+  section{margin-top:56px}
+  p{margin:0 0 13px; max-width:70ch; color:var(--ink-2)}
+  a{color:var(--accent)}
+  strong{color:var(--ink)}
+  code{font-family:var(--mono); font-size:.86em; background:var(--surface-2);
+    border:1px solid var(--line); border-radius:5px; padding:1px 6px; color:var(--ink)}
+  .lead-in{color:var(--muted)}
+
+  .hero{padding:56px 0 6px; border-bottom:1px solid var(--line)}
+  .eyebrow{font-family:var(--mono); font-size:11.5px; letter-spacing:.15em;
+    text-transform:uppercase; color:var(--accent); margin:0 0 14px}
+  h1{font-size:clamp(30px,5.2vw,45px); line-height:1.06; margin:0 0 16px;
+    font-weight:820; letter-spacing:-.022em; text-wrap:balance; color:var(--ink)}
+  .lede{font-size:19px; color:var(--muted); max-width:64ch; margin:0 0 26px}
+  .loop{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:30px;
+    padding:15px 16px; background:var(--surface); border:1px solid var(--line); border-radius:12px}
+  .node{font-weight:640; font-size:13.5px; padding:7px 12px; border-radius:8px;
+    background:var(--surface-2); border:1px solid var(--line); white-space:nowrap}
+  .node.app{color:var(--accent); border-color:color-mix(in srgb,var(--accent) 35%,var(--line))}
+  .arrow{color:var(--muted); font-family:var(--mono)}
+  .loop .back{margin-left:auto; font-family:var(--mono); font-size:11px; letter-spacing:.06em;
+    text-transform:uppercase; color:var(--good)}
+
+  h2{font-size:26px; letter-spacing:-.012em; font-weight:780; margin:0 0 8px; text-wrap:balance; color:var(--ink)}
+  .sub{color:var(--muted); margin:0 0 22px; font-size:16px}
+  h3{font-weight:730; color:var(--ink)}
+
+  /* diagram */
+  .diagram{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:20px; overflow-x:auto}
+  .diagram svg{display:block; width:100%; min-width:660px; height:auto}
+  .legend{display:flex; flex-wrap:wrap; gap:14px 22px; margin-top:16px; padding-top:16px;
+    border-top:1px solid var(--line); font-size:13px; color:var(--muted)}
+  .legend b{color:var(--ink); font-family:var(--mono); font-weight:700}
+
+  .layers{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  @media (max-width:700px){.layers{grid-template-columns:1fr}}
+  .layer{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:22px}
+  .layer .role{font-family:var(--mono); font-size:10.5px; letter-spacing:.11em; text-transform:uppercase;
+    color:var(--accent); margin:0 0 9px}
+  .layer h3{margin:0 0 9px; font-size:18px}
+  .layer p{font-size:14.5px; margin:0 0 8px; max-width:none}
+  .layer .tech{font-size:12.5px; color:var(--muted); font-family:var(--mono);
+    border-top:1px solid var(--line); padding-top:10px; margin-top:12px; line-height:1.7}
+
+  .wiring{display:grid; gap:12px; counter-reset:hop}
+  .hop{display:grid; grid-template-columns:30px auto 1fr; gap:14px; align-items:start;
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:17px 19px}
+  .hop .b{counter-increment:hop; font-family:var(--mono); font-weight:700; font-size:13px;
+    color:var(--on-accent); background:var(--accent); width:26px; height:26px; border-radius:7px;
+    display:flex; align-items:center; justify-content:center}
+  .hop .b::before{content:counter(hop)}
+  .hop .path{font-family:var(--mono); font-size:12px; font-weight:650; color:var(--accent);
+    background:var(--accent-soft); padding:6px 9px; border-radius:7px; white-space:nowrap; height:fit-content}
+  .hop .txt{min-width:0}
+  .hop p{margin:0; font-size:14.5px; max-width:none}
+  .hop .how{color:var(--muted); font-size:13px; margin-top:5px}
+  @media (max-width:620px){.hop{grid-template-columns:30px 1fr}.hop .path{grid-column:2}}
+
+  /* data model */
+  .model{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+  .model .r{display:grid; grid-template-columns:170px 120px 1fr; gap:12px; padding:11px 18px;
+    border-top:1px solid var(--line); align-items:baseline; font-size:14px}
+  .model .r:first-child{border-top:0; background:var(--surface-2); font-weight:700; font-size:12px;
+    text-transform:uppercase; letter-spacing:.05em; color:var(--muted)}
+  .model .f{font-family:var(--mono); font-weight:600; color:var(--ink); font-size:13px}
+  .model .ty{font-family:var(--mono); font-size:12px; color:var(--muted)}
+  .model .d{color:var(--ink-2); font-size:13.5px}
+  .model .hl{color:var(--good); font-weight:700}
+  @media (max-width:640px){.model .r{grid-template-columns:1fr 1fr}.model .d{grid-column:1/-1}}
+
+  .steps{display:grid; gap:14px}
+  .st{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:19px 21px}
+  .st h3{margin:0 0 12px; font-size:17px; display:flex; align-items:center; gap:10px}
+  .st .n{font-family:var(--mono); font-weight:700; color:var(--on-accent); background:var(--accent);
+    width:26px; height:26px; border-radius:7px; display:inline-flex; align-items:center; justify-content:center; font-size:13px; flex:none}
+  pre{margin:0; background:#0c1524; color:#dce6f2; border-radius:10px; padding:15px 17px;
+    overflow-x:auto; font-family:var(--mono); font-size:12.5px; line-height:1.7}
+  pre .c{color:#7f97b2}
+  pre .k{color:#8ec5ff}
+  .st p{font-size:13.5px; color:var(--muted); margin:11px 0 0; max-width:none}
+
+  .res{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+  .res .r{display:grid; grid-template-columns:180px 1fr; gap:14px; padding:11px 18px; border-top:1px solid var(--line); align-items:baseline}
+  .res .r:first-child{border-top:0}
+  .res .k{font-weight:640; font-size:13.5px}
+  .res .v{font-family:var(--mono); font-size:12px; color:var(--muted); word-break:break-all}
+  @media (max-width:560px){.res .r{grid-template-columns:1fr; gap:3px}}
+
+  .base{display:grid; gap:10px}
+  .bl{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:start;
+    background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:14px 18px}
+  .bl .ok{color:var(--good); font-weight:800; font-family:var(--mono); font-size:15px}
+  .bl .t{font-size:14.5px}
+  .bl .t b{font-weight:700}
+
+  .bonus{display:grid; gap:11px}
+  .bcard{display:grid; grid-template-columns:auto 1fr auto; gap:14px; align-items:center;
+    background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:14px 18px}
+  .bcard .ok{color:var(--good); font-weight:800; font-family:var(--mono)}
+  .bcard .t{font-weight:660; font-size:15px}
+  .bcard .t small{display:block; font-weight:400; color:var(--muted); font-size:13px; margin-top:3px; line-height:1.5}
+  .bcard .p{font-family:var(--mono); font-weight:700; color:var(--bonus); font-variant-numeric:tabular-nums; font-size:15px}
+  .callout{background:var(--bonus-soft); border:1px solid color-mix(in srgb,var(--bonus) 32%,var(--line));
+    border-radius:12px; padding:14px 18px; font-size:14px; color:var(--ink-2); margin-top:14px}
+  .callout b{color:var(--bonus)}
+
+  .foot{margin-top:48px; padding-top:22px; border-top:1px solid var(--line);
+    color:var(--muted); font-size:13px; text-align:center}
+  @media print{
+    *{ -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+    @page{ margin:12mm; }
+    body{ font-size:12.5px; }
+    section{ break-inside:avoid; }
+    .layer,.hop,.st,.bcard,.diagram{ break-inside:avoid; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">UiPath End-to-End Orchestration Challenge · Bank Developer Edition</p>
+    <h1>SESAP — a support desk where one click sets a real process in motion</h1>
+    <p class="lede">SESAP (Stanbic IBTC Enterprise Support &amp; Automation Platform) is a UiPath Coded App backed by Data Fabric, orchestrated by a Maestro BPMN process, and executed by a published RPA robot. This document explains what each layer does, exactly how they connect, how to run it, and which bonuses were attempted.</p>
+    <div class="loop">
+      <span class="node app">Coded App</span><span class="arrow">→</span>
+      <span class="node">Maestro (BPMN)</span><span class="arrow">→</span>
+      <span class="node">RPA robot</span><span class="arrow">→</span>
+      <span class="node">Data Fabric</span>
+      <span class="back">↺ app reflects the change</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>Architecture at a glance</h2>
+    <p class="sub">One action in the app travels through orchestration and automation, writes to the system of record, and returns to the app as a visible change. The numbered arrows are the same six hops described below.</p>
+    <div class="diagram">
+      <svg viewBox="0 0 760 600" role="img" aria-label="SESAP architecture: Coded App to Maestro to RPA to Data Fabric and back">
+        <defs>
+          <marker id="ah" markerWidth="9" markerHeight="9" refX="7.5" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#586576"></path>
+          </marker>
+          <marker id="ahg" markerWidth="9" markerHeight="9" refX="7.5" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#137a3a"></path>
+          </marker>
+          <marker id="aha" markerWidth="9" markerHeight="9" refX="7.5" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#0057b8"></path>
+          </marker>
+        </defs>
+
+        <!-- return arrow (drawn first, behind boxes): Data Fabric -> App, over the top -->
+        <path d="M660,250 L660,20 L380,20 L380,42" fill="none" stroke="#137a3a" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ahg)"></path>
+        <rect x="392" y="10" width="150" height="20" rx="5" fill="#e2f2e8"></rect>
+        <text x="467" y="24" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="11" fill="#137a3a" font-weight="700">⑥ app reflects (read)</text>
+
+        <!-- App -> Data Fabric (write) -->
+        <path d="M490,80 L560,250" fill="none" stroke="#0057b8" stroke-width="2" marker-end="url(#aha)"></path>
+        <rect x="497" y="150" width="132" height="20" rx="5" fill="#e7f0fb"></rect>
+        <text x="563" y="164" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="11" fill="#0057b8" font-weight="700">① create ticket</text>
+
+        <!-- RPA -> Data Fabric (write-back) -->
+        <path d="M490,520 L560,410" fill="none" stroke="#0057b8" stroke-width="2" marker-end="url(#aha)"></path>
+        <rect x="486" y="452" width="150" height="20" rx="5" fill="#e7f0fb"></rect>
+        <text x="561" y="466" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="11" fill="#0057b8" font-weight="700">⑤ write-back status</text>
+
+        <!-- App -> Maestro -->
+        <line x1="380" y1="120" x2="380" y2="256" stroke="#586576" stroke-width="2" marker-end="url(#ah)"></line>
+        <rect x="388" y="178" width="150" height="20" rx="5" fill="#eef2f7"></rect>
+        <text x="463" y="192" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="11" fill="#26364b" font-weight="700">② act → start process</text>
+
+        <!-- Maestro -> RPA -->
+        <line x1="380" y1="346" x2="380" y2="482" stroke="#586576" stroke-width="2" marker-end="url(#ah)"></line>
+        <rect x="388" y="404" width="128" height="20" rx="5" fill="#eef2f7"></rect>
+        <text x="452" y="418" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="11" fill="#26364b" font-weight="700">③ invoke robot</text>
+
+        <!-- RPA -> Anthropic -->
+        <line x1="270" y1="512" x2="212" y2="500" stroke="#586576" stroke-width="1.6" marker-end="url(#ah)"></line>
+        <!-- RPA -> Gmail -->
+        <line x1="270" y1="544" x2="212" y2="556" stroke="#586576" stroke-width="1.6" marker-end="url(#ah)"></line>
+        <text x="150" y="470" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="10.5" fill="#586576">④ AI triage / notify</text>
+
+        <!-- BOXES -->
+        <!-- App -->
+        <rect x="270" y="42" width="220" height="78" rx="12" fill="#ffffff" stroke="#0057b8" stroke-width="2"></rect>
+        <text x="380" y="70" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="10" fill="#0057b8" letter-spacing="1">FRONT END</text>
+        <text x="380" y="90" text-anchor="middle" font-family="system-ui,sans-serif" font-size="16" font-weight="800" fill="#0f1a2b">Coded App</text>
+        <text x="380" y="108" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11.5" fill="#586576">React + TypeScript SDK</text>
+
+        <!-- Maestro -->
+        <rect x="270" y="262" width="220" height="84" rx="12" fill="#ffffff" stroke="#c9d4e2" stroke-width="1.5"></rect>
+        <text x="380" y="290" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="10" fill="#586576" letter-spacing="1">ORCHESTRATION</text>
+        <text x="380" y="310" text-anchor="middle" font-family="system-ui,sans-serif" font-size="16" font-weight="800" fill="#0f1a2b">Maestro (BPMN)</text>
+        <text x="380" y="328" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11.5" fill="#586576">TicketLifecycle · gateways</text>
+
+        <!-- RPA -->
+        <rect x="270" y="488" width="220" height="84" rx="12" fill="#ffffff" stroke="#c9d4e2" stroke-width="1.5"></rect>
+        <text x="380" y="516" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="10" fill="#586576" letter-spacing="1">THE HANDS</text>
+        <text x="380" y="536" text-anchor="middle" font-family="system-ui,sans-serif" font-size="16" font-weight="800" fill="#0f1a2b">RPA robot</text>
+        <text x="380" y="554" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11.5" fill="#586576">TicketAutomation v2.0.13</text>
+
+        <!-- Data Fabric -->
+        <rect x="560" y="250" width="170" height="160" rx="12" fill="#f5f7fa" stroke="#0057b8" stroke-width="2"></rect>
+        <text x="645" y="300" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="10" fill="#0057b8" letter-spacing="1">SYSTEM OF RECORD</text>
+        <text x="645" y="322" text-anchor="middle" font-family="system-ui,sans-serif" font-size="16" font-weight="800" fill="#0f1a2b">Data Fabric</text>
+        <text x="645" y="342" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11.5" fill="#586576">Ticket entity</text>
+        <text x="645" y="366" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="10.5" fill="#137a3a" font-weight="700">AssignmentStatus</text>
+        <text x="645" y="382" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10.5" fill="#586576">Unassigned → Assigned</text>
+
+        <!-- Externals -->
+        <rect x="40" y="480" width="172" height="40" rx="9" fill="#f5f7fa" stroke="#c9d4e2" stroke-width="1.3"></rect>
+        <text x="126" y="504" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12.5" font-weight="600" fill="#26364b">Anthropic · Claude</text>
+        <rect x="40" y="536" width="172" height="40" rx="9" fill="#f5f7fa" stroke="#c9d4e2" stroke-width="1.3"></rect>
+        <text x="126" y="560" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12.5" font-weight="600" fill="#26364b">Gmail · Integration Svc</text>
+      </svg>
+      <div class="legend">
+        <span><b>①②</b> app-initiated</span>
+        <span><b>③</b> Maestro invokes the robot</span>
+        <span><b>④</b> robot calls AI + email</span>
+        <span><b>⑤</b> robot writes back</span>
+        <span><b style="color:#137a3a">⑥</b> app reads &amp; reflects — loop closed</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The four layers</h2>
+    <p class="sub">Each layer has one job. The detail below is what a judge can verify in the source.</p>
+    <div class="layers">
+      <div class="layer">
+        <p class="role">Front end</p><h3>Coded App</h3>
+        <p>A React/TypeScript operational dashboard support leads use to view every active ticket, search and sort, open a full ticket record, create tickets, and act on them. It reads and writes Data Fabric directly and starts the orchestration. Three role-based experiences (supervisor / agent / customer) come from one codebase.</p>
+        <p class="tech">Vite build · @uipath/uipath-typescript SDK · deployed as a Coded Web App (uipath.host) · platform OAuth (DataFabric + OR scopes)</p>
+      </div>
+      <div class="layer">
+        <p class="role">System of record</p><h3>Data Fabric</h3>
+        <p>Holds the <code>Ticket</code> entity (24 fields — 19 business, 5 system). Both the app and the robot read and update it. <code>AssignmentStatus</code> is the field the automation flips to prove the write-back loop; <code>UpdateTime</code> gives real resolution-time analytics.</p>
+        <p class="tech">Entity id ca14332a… · SDK entities.getAllRecords / update · schema in docs/DATA_FABRIC_SCHEMA.md</p>
+      </div>
+      <div class="layer">
+        <p class="role">Orchestration brain</p><h3>Maestro (BPMN)</h3>
+        <p>A BPMN process, <code>TicketLifecycle</code>, that models the ticket lifecycle: a start event, an <em>Action</em> gateway routing submit / resolve / close / escalate, triage and routing tasks, a risk gateway that sends high-risk tickets to manual assignment, and end events. It invokes the robot as a service task.</p>
+        <p class="tech">Deployed Maestro release · start + gateways + tasks + ends · passes ticket context as input args</p>
+      </div>
+      <div class="layer">
+        <p class="role">The hands</p><h3>RPA robot</h3>
+        <p>A published automation, <code>TicketAutomation</code>, that does the concrete work: AI triage (categorise / prioritise / summarise / recommend), auto-assignment to the right team, the Data Fabric write-back, and branded lifecycle emails (CC the supervisor).</p>
+        <p class="tech">SESAP.process.TicketAutomation v2.0.13 · Data Service + Anthropic (InvokeCode) + Gmail activities · reads the key from an Orchestrator asset</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>How the layers connect</h2>
+    <p class="sub">The six hops from the diagram, with the actual mechanism behind each.</p>
+    <div class="wiring">
+      <div class="hop"><span class="b"></span><span class="path">App → Data Fabric</span><div class="txt">
+        <p>Creating or editing a ticket writes it straight to the <code>Ticket</code> entity as <code>Unassigned</code>.</p>
+        <p class="how">TypeScript SDK <code>entities</code> API using the Coded App's platform auth. Field mapping lives in <code>toEntityRecord</code>; failures never block the UI.</p></div></div>
+      <div class="hop"><span class="b"></span><span class="path">App → Maestro</span><div class="txt">
+        <p>Acting on a ticket — create, resolve, close, escalate — starts the Maestro process for that specific action.</p>
+        <p class="how"><code>processes.start</code> passes the action + ticket context (Ref, Subject, Category, RiskLevel…) as input arguments, which drive the BPMN gateways. A "Live automation" toggle gates this to conserve Robot Units during development.</p></div></div>
+      <div class="hop"><span class="b"></span><span class="path">Maestro → RPA</span><div class="txt">
+        <p>The BPMN triages and routes the ticket, then invokes the published robot as one of its steps.</p>
+        <p class="how">A Maestro service task starts the <code>TicketAutomation</code> job in the <code>SESAP-Live</code> folder; high-risk tickets branch to a manual-assignment path instead.</p></div></div>
+      <div class="hop"><span class="b"></span><span class="path">RPA → AI &amp; email</span><div class="txt">
+        <p>The robot asks Claude to categorise, prioritise, summarise and recommend, then emails the requester (CC supervisor).</p>
+        <p class="how">Anthropic call inside an InvokeCode activity, keyed by the Orchestrator asset <code>SESAP_Anthropic_Key</code> (never in the repo); Gmail via Integration Service.</p></div></div>
+      <div class="hop"><span class="b"></span><span class="path">RPA → Data Fabric</span><div class="txt">
+        <p>The robot assigns the ticket and writes <code>AssignmentStatus</code> from <code>Unassigned</code> to <code>Assigned</code> — the write-back that proves the loop.</p>
+        <p class="how">Data Service activities update the record; <code>UpdateTime</code> advances, which is what the resolution-time KPI reads.</p></div></div>
+      <div class="hop"><span class="b"></span><span class="path">Data Fabric → App</span><div class="txt">
+        <p>The app re-reads the entity and reflects the new status and assignee — trigger to visible result, loop closed.</p>
+        <p class="how"><code>getAllRecords</code> on load/refresh; <code>fromEntityRecord</code> maps fields back, resolving the assignee name to an email so "Assigned&nbsp;To&nbsp;Me" works after a reload.</p></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The Ticket data model</h2>
+    <p class="sub">The minimum challenge fields, plus the write-back and timing fields that make the loop and the analytics real.</p>
+    <div class="model">
+      <div class="r"><span>Field</span><span>Type</span><span>Role</span></div>
+      <div class="r"><span class="f">Ref / Id</span><span class="ty">STRING / UUID</span><span class="d">Human ref + Data Fabric primary key</span></div>
+      <div class="r"><span class="f">Subject</span><span class="ty">STRING</span><span class="d">Ticket title</span></div>
+      <div class="r"><span class="f">Description</span><span class="ty">STRING</span><span class="d">Full detail</span></div>
+      <div class="r"><span class="f">Priority</span><span class="ty">STRING</span><span class="d">low · medium · high · urgent (drives SLA)</span></div>
+      <div class="r"><span class="f">Status</span><span class="ty">STRING</span><span class="d">open · in&nbsp;progress · resolved · closed</span></div>
+      <div class="r"><span class="f">AssignedTo</span><span class="ty">STRING</span><span class="d">Assignee, set by the robot</span></div>
+      <div class="r"><span class="f">CreatedAt</span><span class="ty">DATETIME</span><span class="d">App-set creation time (SLA baseline)</span></div>
+      <div class="r"><span class="f hl">AssignmentStatus</span><span class="ty">STRING</span><span class="d"><span class="hl">The write-back proof:</span> Unassigned → Assigned</span></div>
+      <div class="r"><span class="f hl">UpdateTime</span><span class="ty">DATETIME_TZ</span><span class="d"><span class="hl">Data-Service managed;</span> powers avg resolution time</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Setup &amp; run</h2>
+    <p class="sub">Reproducible from the repo. The app and the robot deploy on independent pipelines; both are free of Robot Units to build.</p>
+    <div class="steps">
+      <div class="st"><h3><span class="n">1</span> Coded App — build, then pack → publish → deploy</h3>
+        <pre><span class="c"># all three steps are required — deploy alone is a silent no-op,</span>
+<span class="c"># and the version must be bumped or the old CDN revision is reused</span>
+npm run build
+uip codedapp pack ./dist <span class="k">--name</span> "SESAP Support Platform" \
+    <span class="k">--version</span> &lt;NEW&gt; <span class="k">--content-type</span> webapp <span class="k">--main-file</span> index.html
+uip codedapp publish <span class="k">--name</span> "sesapsupportplatform" <span class="k">--version</span> &lt;NEW&gt; <span class="k">--type</span> Web
+uip codedapp deploy <span class="k">--name</span> "SESAP Support Platform" <span class="k">--folder-key</span> &lt;SHARED&gt;</pre>
+        <p>Vite injects the app's OAuth scopes/clientId into <code>dist/index.html</code> at build time from <code>uipath.json</code>.</p></div>
+      <div class="st"><h3><span class="n">2</span> RPA robot — pack → upload → repoint the release</h3>
+        <pre>uip rpa pack SESAP/TicketAutomation ./out \
+    <span class="k">--package-id</span> SESAP.process.TicketAutomation <span class="k">--package-version</span> &lt;NEW&gt;
+uip or packages upload ./out/SESAP.process.TicketAutomation.&lt;NEW&gt;.nupkg
+uip or processes update-version &lt;RPA_KEY&gt; <span class="k">--package-version</span> &lt;NEW&gt;</pre>
+        <p>The Anthropic API key is never committed — the robot reads it at runtime from the Orchestrator asset <code>SESAP_Anthropic_Key</code>.</p></div>
+      <div class="st"><h3><span class="n">3</span> Maestro &amp; Data Fabric</h3>
+        <p style="margin-top:0"><code>TicketLifecycle</code> is deployed as a Maestro release in <code>SESAP-Live</code>; the <code>Ticket</code> entity is provisioned in Data Fabric (schema in <code>docs/DATA_FABRIC_SCHEMA.md</code>). The whole solution is kept in sync to Studio Web with <code>uip solution upload SESAP --force</code>.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Deployed resources — the real values</h2>
+    <p class="sub">Live in organization <code>stanbgdgzsbd</code>, tenant <code>DefaultTenant</code>.</p>
+    <div class="res">
+      <div class="r"><span class="k">Live app</span><span class="v">https://stanbgdgzsbd.uipath.host/sesap-support-platform · v2.9.19 (rev 32)</span></div>
+      <div class="r"><span class="k">Shared folder key</span><span class="v">1c313714-4ed8-41a8-91f2-edfa178a3902</span></div>
+      <div class="r"><span class="k">SESAP-Live folder</span><span class="v">c034c633-bf82-47ba-9e35-8955ea38d2b0</span></div>
+      <div class="r"><span class="k">Ticket entity</span><span class="v">ca14332a-0081-f111-b338-000d3ab4d3b7 · 24 fields</span></div>
+      <div class="r"><span class="k">RPA release</span><span class="v">SESAP.process.TicketAutomation v2.0.13 · 38E6499B-5D0E-48BF-8456-65B37D6689B6</span></div>
+      <div class="r"><span class="k">Maestro process</span><span class="v">TicketLifecycle · fedfe5d6-49f8-4cab-9503-d11f2d8ddb81</span></div>
+      <div class="r"><span class="k">Storage bucket</span><span class="v">id 195596 · ticket attachments</span></div>
+      <div class="r"><span class="k">AI key (asset)</span><span class="v">SESAP_Anthropic_Key · server-side only, never in repo</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Baseline requirements — all met</h2>
+    <p class="sub">Section 4 of the brief, the mandatory floor.</p>
+    <div class="base">
+      <div class="bl"><span class="ok">✓</span><span class="t"><b>4.1 Coded App</b> — TypeScript Coded App; lists all active tickets live from Data Fabric; search &amp; sort; full ticket detail view; create-ticket persists to Data Fabric; in-app actions start the orchestration.</span></div>
+      <div class="bl"><span class="ok">✓</span><span class="t"><b>4.2 Data Fabric</b> — a <code>Ticket</code> entity with ID, subject, description, priority, status, assignee, created date; <code>AssignmentStatus</code> is updated by the automation (the write-back).</span></div>
+      <div class="bl"><span class="ok">✓</span><span class="t"><b>4.3 RPA workflow</b> — a published robot doing meaningful work (AI triage + auto-assign + notify); reads and writes the Ticket entity; invoked by the orchestration, not run in isolation.</span></div>
+      <div class="bl"><span class="ok">✓</span><span class="t"><b>4.4 Maestro BPMN</b> — start event, multiple tasks, decision gateways, end events; models a recognisable ticket lifecycle; invokes the RPA workflow; shares Data Fabric state.</span></div>
+      <div class="bl"><span class="ok">✓</span><span class="t"><b>4.5 End-to-end</b> — the full loop works from an app action through Maestro and the robot to a Data Fabric write-back the app reflects; demonstrable live and on video.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Bonus items attempted</h2>
+    <p class="sub">Nine tracks. Requested 30 → capped at the +25 maximum. Stated honestly.</p>
+    <div class="bonus">
+      <div class="bcard"><span class="ok">✓</span><span class="t">Agentic / AI triage<small>Claude categorises, prioritises, summarises and recommends a resolution — inside the robot, within the flow.</small></span><span class="p">+6</span></div>
+      <div class="bcard"><span class="ok">✓</span><span class="t">Document IDP<small>On-device OCR reads images / ID cards; pdf.js extracts PDF text — attachments are read out in the copilot.</small></span><span class="p">+4</span></div>
+      <div class="bcard"><span class="ok">✓</span><span class="t">Human-in-the-loop<small>Procurement &amp; internal-request tickets route to supervisor approval, surfaced in the app and by email.</small></span><span class="p">+4</span></div>
+      <div class="bcard"><span class="ok">✓</span><span class="t">SLA &amp; escalation<small>SLA timers per priority; overdue tickets auto-escalate to Urgent and alert the supervisor.</small></span><span class="p">+3</span></div>
+      <div class="bcard"><span class="ok">✓</span><span class="t">Role-based views<small>Distinct supervisor, agent, and customer experiences from one codebase.</small></span><span class="p">+3</span></div>
+      <div class="bcard"><span class="ok">✓</span><span class="t">Analytics / KPIs<small>Open by priority, average resolution time, SLA compliance, created-vs-resolved trend.</small></span><span class="p">+3</span></div>
+      <div class="bcard"><span class="ok">✓</span><span class="t">Engineering quality<small>Automated tests, reusable components, and error handling that degrades gracefully instead of crashing.</small></span><span class="p">+3</span></div>
+      <div class="bcard"><span class="ok">✓</span><span class="t">Notifications<small>Real Gmail emails on every lifecycle event, CC to the supervisor.</small></span><span class="p">+2</span></div>
+      <div class="bcard"><span class="ok">✓</span><span class="t">Polished UX<small>On-brand banking interface a support lead would use daily.</small></span><span class="p">+2</span></div>
+    </div>
+    <p class="callout"><b>Honest note:</b> Human-in-the-loop approval is implemented as an app-and-email approval flow (matching the brief's “with the app or email surfacing it”), not a Maestro Action Center user task. Everything else is exactly as described.</p>
+  </section>
+
+  <p class="foot">SESAP · Stanbic IBTC Enterprise Support &amp; Automation Platform &nbsp;·&nbsp; Coded App + RPA + Maestro + Data Fabric &nbsp;·&nbsp; org stanbgdgzsbd / DefaultTenant</p>
+
+</div>

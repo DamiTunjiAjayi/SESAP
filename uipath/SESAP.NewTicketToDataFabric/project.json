@@ -1,0 +1,50 @@
+{
+  "name": "SESAP.NewTicketToDataFabric",
+  "projectId": "b1a7f3c2-0000-4d00-9e00-sesapdatafabric",
+  "description": "Consumes SESAP_NewTickets queue items and creates unassigned Ticket records in UiPath Data Fabric (Data Service).",
+  "main": "Main.xaml",
+  "dependencies": {
+    "UiPath.System.Activities": "[24.10.5]",
+    "UiPath.DataService.Activities": "[2.4.2]"
+  },
+  "webServices": [],
+  "entitiesStores": [],
+  "schemaVersion": "4.2.0",
+  "studioVersion": "24.10.0.0",
+  "projectVersion": "1.0.0",
+  "runtimeOptions": {
+    "autoDispose": false,
+    "netFrameworkLazyLoading": false,
+    "isPausable": true,
+    "isAttended": false,
+    "requiresUserInteraction": false,
+    "supportsPersistence": false,
+    "excludedLoggedData": ["Private:*", "*password*"],
+    "executionType": "Workflow",
+    "readyForPiP": false,
+    "startsInPiP": false,
+    "mustRestoreAllDependencies": true,
+    "pipType": "ChildSession"
+  },
+  "designOptions": {
+    "projectProfile": "Development",
+    "outputType": "Process",
+    "libraryOptions": { "includeOriginalXaml": false, "privateWorkflows": [] },
+    "processOptions": { "ignoredFiles": [] },
+    "fileInfoCollection": [],
+    "modernBehavior": true
+  },
+  "expressionLanguage": "VisualBasic",
+  "entryPoints": [
+    {
+      "filePath": "Main.xaml",
+      "uniqueId": "b1a7f3c2-1111-4d00-9e00-sesapentrypoint",
+      "input": [],
+      "output": []
+    }
+  ],
+  "isTemplate": false,
+  "templateProjectData": {},
+  "publishData": {},
+  "targetFramework": "Windows"
+}

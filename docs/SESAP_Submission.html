@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>SESAP — UiPath End-to-End Orchestration Challenge Submission</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Segoe UI", Helvetica, Arial, sans-serif; color: #1f2937; line-height: 1.5; font-size: 11.5pt; margin: 0; }
+  h1 { font-size: 23pt; margin: 0 0 2px; color: #0a2540; }
+  h2 { font-size: 15pt; color: #0057b8; border-bottom: 2px solid #e5e7eb; padding-bottom: 5px; margin: 26px 0 12px; }
+  h3 { font-size: 12.5pt; color: #0a2540; margin: 16px 0 6px; }
+  p { margin: 0 0 9px; }
+  code { background: #f1f5f9; padding: 1px 5px; border-radius: 4px; font-family: "SF Mono", Consolas, monospace; font-size: 9.8pt; }
+  a { color: #0057b8; text-decoration: none; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0 14px; font-size: 10pt; }
+  th, td { border: 1px solid #e2e8f0; padding: 7px 9px; text-align: left; vertical-align: top; }
+  th { background: #f8fafc; color: #0a2540; font-weight: 600; }
+  .lead { font-size: 12pt; color: #475569; margin: 4px 0 0; }
+  .cover { border-bottom: 3px solid #0057b8; padding-bottom: 16px; margin-bottom: 8px; }
+  .pill { display: inline-block; background: #eef2ff; color: #4338ca; border-radius: 20px; padding: 2px 10px; font-size: 9pt; font-weight: 600; margin: 2px 4px 2px 0; }
+  .ok { color: #16a34a; font-weight: 600; }
+  .meta td:first-child { color: #64748b; width: 34%; }
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 6px; margin: 12px 0; }
+  .node { flex: 1 1 0; min-width: 120px; border: 1.5px solid #0057b8; border-radius: 9px; padding: 9px 10px; background: #f5f9ff; }
+  .node .t { font-weight: 700; font-size: 10pt; color: #0057b8; }
+  .node .d { font-size: 8.6pt; color: #475569; margin-top: 3px; }
+  .arrow { align-self: center; color: #94a3b8; font-weight: 700; font-size: 13pt; }
+  .callout { background: #f0fdf4; border: 1px solid #bbf7d0; border-left: 4px solid #16a34a; border-radius: 7px; padding: 10px 14px; margin: 12px 0; }
+  .callout.blue { background: #eff6ff; border-color: #bfdbfe; border-left-color: #0057b8; }
+  .small { font-size: 9pt; color: #64748b; }
+  ul { margin: 4px 0 10px; padding-left: 20px; }
+  li { margin: 3px 0; }
+  .pagebreak { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>SESAP — Stanbic IBTC Enterprise Support &amp; Automation Platform</h1>
+  <p class="lead">UiPath Developer Challenge · End-to-End Orchestration (Coded App + RPA + Maestro) · Bank Developer Edition</p>
+  <p class="small" style="margin-top:8px">
+    <span class="pill">Coded App</span><span class="pill">Data Fabric</span><span class="pill">Maestro BPMN</span>
+    <span class="pill">RPA Robot</span><span class="pill">AI Agent (Claude)</span><span class="pill">Live &amp; verified</span>
+  </p>
+</div>
+
+<h2>1. Executive summary</h2>
+<p>SESAP is a support‑ticket operations platform that spans the full UiPath stack. A support lead works in a <b>Coded App</b> that reads and writes ticket data in <b>UiPath Data Fabric</b>. When a ticket is created, the app sets a real automated process in motion: a <b>Maestro (BPMN)</b> process orchestrates the ticket lifecycle and invokes an <b>RPA robot</b>, which runs an <b>AI triage agent</b> (Anthropic Claude), assigns the ticket, and writes the results back to Data Fabric — which the app then reflects. Every stage sends branded email notifications with a one‑click deep link back to the ticket.</p>
+<p><b>The full loop is deployed and verified live</b> — an action in the app flows through Maestro and the robot to a visible data update, end to end.</p>
+
+<table class="meta">
+  <tr><td>Live application</td><td><code>https://stanbgdgzsbd.uipath.host/sesap-support-platform</code></td></tr>
+  <tr><td>Environment</td><td>UiPath Automation Cloud · org <code>stanbgdgzsbd</code> · tenant <code>DefaultTenant</code></td></tr>
+  <tr><td>Front end</td><td>UiPath Coded App (React + Vite), official <code>@uipath/uipath-typescript</code> SDK</td></tr>
+  <tr><td>System of record</td><td>Data Fabric <code>Ticket</code> entity (24 fields)</td></tr>
+  <tr><td>Orchestration</td><td>Maestro process <code>TicketLifecycle</code> → RPA process <code>TicketAutomation</code> (folder Shared/SESAP‑Live)</td></tr>
+  <tr><td>AI</td><td>Anthropic Claude (<code>claude-haiku-4-5</code>) called by the robot inside the flow</td></tr>
+</table>
+
+<h2>2. Reference architecture</h2>
+<div class="flow">
+  <div class="node"><div class="t">1 · Coded App</div><div class="d">Support lead views, searches, investigates, creates tickets &amp; starts the orchestration.</div></div>
+  <div class="arrow">→</div>
+  <div class="node"><div class="t">2 · Data Fabric</div><div class="d">Ticket entity — the shared system of record for every layer.</div></div>
+  <div class="arrow">→</div>
+  <div class="node"><div class="t">3 · Maestro BPMN</div><div class="d">Models the lifecycle: classify → route → risk gateway → assign → invoke robot.</div></div>
+  <div class="arrow">→</div>
+  <div class="node"><div class="t">4 · RPA Robot</div><div class="d">AI triage (Claude) → assign engineer → write results → send emails.</div></div>
+</div>
+<p class="small" style="text-align:center">↑ The robot writes back to <b>Data Fabric</b>, and the <b>Coded App</b> re‑reads it — closing the loop. Email notifications fire at each lifecycle stage.</p>
+
+<h3>The end-to-end loop, step by step</h3>
+<ol>
+  <li>A user submits a ticket in the Coded App.</li>
+  <li>The app writes it to the Data Fabric <code>Ticket</code> entity with <code>AssignmentStatus = "Unassigned"</code>.</li>
+  <li>The app starts the <b>Maestro</b> <code>TicketLifecycle</code> process (a job started via the SDK — the "UI action → orchestration" trigger).</li>
+  <li>Maestro runs the lifecycle — <b>Classify → Route → risk gateway (auto vs. manual) → Assign</b> — then its service task invokes the RPA robot and waits for it.</li>
+  <li>The robot calls the <b>AI agent</b> (Claude) to categorise, prioritise, summarise and recommend; assigns an engineer by category; and <code>UpdateEntityRecord</code> writes assignee, status, AI category/priority/summary/recommendation to Data Fabric.</li>
+  <li>The robot sends branded emails (requester + assignee) with an <b>"Open ticket in SESAP"</b> deep link.</li>
+  <li>The app re-reads Data Fabric and shows the ticket now <b>Assigned</b>, with the AI triage panel populated.</li>
+</ol>
+
+<div class="callout">
+  <b>Verified live.</b> A ticket created as <i>Unassigned</i> with only a free‑text description ("app logs me out during a transfer") was auto‑triaged by the AI to <b>Category: Digital Banking, Priority: urgent</b>, routed to <b>Tier 2 Support → Kunle Adeyemi</b>, written back to Data Fabric as <b>Assigned</b>, and surfaced in the app — with both notification emails delivered. The loop runs from a single click.
+</div>
+
+<div class="pagebreak"></div>
+<h2>3. The four layers in detail</h2>
+
+<h3>3.1 Coded App (operational front end)</h3>
+<ul>
+  <li>UiPath Coded App (React/Vite) using the official UiPath TypeScript SDK; auth via the platform‑injected context.</li>
+  <li><b>Lists all tickets live from Data Fabric</b> with search, multi‑column sort, and filters.</li>
+  <li><b>Ticket detail</b> view — full record, SLA countdown, activity trail, attachments, and the <b>AI Triage panel</b>.</li>
+  <li><b>Create ticket</b> that persists to Data Fabric and starts the orchestration.</li>
+  <li><b>Role-based portals</b> — distinct Staff vs. Customer experiences.</li>
+  <li><b>Live analytics</b> — KPIs, created‑vs‑resolved trend, status/priority/department distributions, SLA compliance, and robot health computed from real Orchestrator job outcomes.</li>
+  <li><b>Deep link</b> — opens a specific ticket from an email link (<code>?ticket=&lt;Ref&gt;</code>), surviving the sign‑in round‑trip.</li>
+</ul>
+
+<h3>3.2 Data Fabric (system of record)</h3>
+<p>Entity <code>Ticket</code> — 19 business fields + 5 system fields. Key fields:</p>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Role</th></tr>
+  <tr><td><code>Ref</code></td><td>Text (unique)</td><td>Human reference, e.g. SESAP‑1042</td></tr>
+  <tr><td><code>Subject</code> / <code>Description</code></td><td>Text / Multiline</td><td>Ticket content (input to the AI)</td></tr>
+  <tr><td><code>Category</code> / <code>Priority</code></td><td>Text</td><td>Set by the AI agent; drive routing</td></tr>
+  <tr><td><code>AssignedTo</code></td><td>Text</td><td>Engineer, written by the robot</td></tr>
+  <tr><td><code>AssignmentStatus</code></td><td>Text</td><td><b>Write-back proof field: Unassigned → Assigned</b></td></tr>
+  <tr><td><code>SubCategory</code> / <code>Tags</code></td><td>Text</td><td>AI summary / AI recommendation</td></tr>
+  <tr><td><code>RequesterEmail</code></td><td>Text</td><td>Notification recipient</td></tr>
+</table>
+
+<h3>3.3 Maestro (orchestration brain)</h3>
+<ul>
+  <li>BPMN process <code>TicketLifecycle</code> with a start event, four tasks, exclusive gateways, and end events.</li>
+  <li>Models the lifecycle: <b>Ticket Submitted → Classify → Route to Team → risk gateway (auto‑assign vs. manual) → Assign Ticket → Run Auto‑Assign Robot</b>.</li>
+  <li>The decision gateway routes high‑risk tickets to a manual path and everything else to automated assignment.</li>
+  <li>Invokes the RPA robot via an <code>Orchestrator.StartJob</code> service task (bound to the published RPA release) — so state is shared across the solution through the robot's Data Fabric writes.</li>
+</ul>
+
+<h3>3.4 RPA workflow (the hands)</h3>
+<ul>
+  <li>Published process <code>TicketAutomation</code> using real UiPath Data Service activities — <code>QueryEntityRecords</code> and <code>UpdateEntityRecord</code> against the <code>Ticket</code> entity.</li>
+  <li>For each unassigned ticket: run AI triage → set category/priority → route to team → assign engineer → write back to Data Fabric → send lifecycle emails.</li>
+  <li>Invoked by Maestro (batch mode) and by the app for lifecycle emails (argument‑driven mode) — one release, two modes.</li>
+</ul>
+
+<div class="pagebreak"></div>
+<h2>4. AI triage agent</h2>
+<p>The standout capability: a genuine AI agent invoked <b>inside the orchestration</b>. When the robot processes a ticket it calls Anthropic Claude (<code>claude-haiku-4-5</code>) with the ticket's subject and description and receives structured JSON:</p>
+<ul>
+  <li><b>Category</b> — one of the bank's support categories (drives routing/assignment).</li>
+  <li><b>Priority</b> — low / medium / high / urgent.</li>
+  <li><b>Summary</b> — a one‑line synopsis for the support lead.</li>
+  <li><b>Recommendation</b> — a suggested resolution / next action.</li>
+</ul>
+<p>The agent's output is written back to Data Fabric and shown in the app's <b>AI Triage panel</b>. The API key is stored securely as an Orchestrator asset (<code>SESAP_Anthropic_Key</code>) — never in code. This also fulfils the "enrich &amp; act" stage of the ticket lifecycle.</p>
+
+<h2>5. Email notifications (full lifecycle)</h2>
+<p>Real emails via the UiPath Gmail Integration Service connection — branded HTML cards with an <b>"Open ticket in SESAP"</b> deep‑link button, delivered at each stage:</p>
+<table>
+  <tr><th>Lifecycle stage</th><th>Recipients</th></tr>
+  <tr><td>Ticket created (acknowledgement)</td><td>Requester</td></tr>
+  <tr><td>Assigned</td><td>Requester + Assignee</td></tr>
+  <tr><td>Escalated</td><td>Requester + Assignee</td></tr>
+  <tr><td>Resolved / Closed</td><td>Requester</td></tr>
+</table>
+
+<h2>6. Baseline requirements — compliance</h2>
+<table>
+  <tr><th>Requirement</th><th>Status</th></tr>
+  <tr><td>Coded App connected to the environment</td><td class="ok">Met</td></tr>
+  <tr><td>Lists all tickets live from Data Fabric; search &amp; sort</td><td class="ok">Met</td></tr>
+  <tr><td>Ticket detail view</td><td class="ok">Met</td></tr>
+  <tr><td>Create ticket persists to Data Fabric</td><td class="ok">Met</td></tr>
+  <tr><td>In-app action starts the orchestration</td><td class="ok">Met</td></tr>
+  <tr><td>Ticket entity with required fields + a status field the automation updates</td><td class="ok">Met (AssignmentStatus)</td></tr>
+  <tr><td>Published RPA reads/writes Data Fabric, invoked by the orchestration</td><td class="ok">Met</td></tr>
+  <tr><td>BPMN: start + ≥3 tasks + gateway + end; models lifecycle; invokes RPA</td><td class="ok">Met</td></tr>
+  <tr><td>Full loop works &amp; is demonstrable</td><td class="ok">Met (verified live)</td></tr>
+</table>
+
+<h2>7. Bonus features delivered</h2>
+<table>
+  <tr><th>Bonus</th><th>What was delivered</th></tr>
+  <tr><td><b>Agentic / AI</b></td><td>Claude triage agent (categorise + prioritise + summarise + recommend) invoked within the flow; results drive routing and appear in the app.</td></tr>
+  <tr><td><b>Role-based views</b></td><td>Distinct Staff and Customer portals.</td></tr>
+  <tr><td><b>Analytics / KPIs</b></td><td>In‑app dashboard from live data: open by priority, status mix, SLA compliance, trend, robot health.</td></tr>
+  <tr><td><b>Notifications</b></td><td>Real Gmail notifications across the full lifecycle, to both parties, with deep links.</td></tr>
+  <tr><td><b>Polished UX</b></td><td>Enterprise, on‑brand interface with light/dark themes.</td></tr>
+</table>
+
+<h2>8. Deployed resources</h2>
+<table class="meta">
+  <tr><td>Coded App</td><td><code>https://stanbgdgzsbd.uipath.host/sesap-support-platform</code></td></tr>
+  <tr><td>Data Fabric entity</td><td><code>Ticket</code></td></tr>
+  <tr><td>Maestro process</td><td><code>TicketLifecycle</code> (Shared/SESAP‑Live)</td></tr>
+  <tr><td>RPA process</td><td><code>TicketAutomation</code> (Shared/SESAP‑Live)</td></tr>
+  <tr><td>AI key (secure)</td><td>Orchestrator asset <code>SESAP_Anthropic_Key</code></td></tr>
+  <tr><td>Email</td><td>Gmail Integration Service connection</td></tr>
+</table>
+
+<h2>9. How to demonstrate</h2>
+<ol>
+  <li>Open the app and sign in; show the live ticket queue (search &amp; sort) and a ticket detail.</li>
+  <li>Create a ticket → watch the notifications (stored in Data Fabric → orchestration started).</li>
+  <li>Show the Maestro instance flowing through classify → route → assign → run robot.</li>
+  <li>Show the RPA job, then the ticket in Data Fabric now Assigned with AI triage populated.</li>
+  <li>Back in the app: the ticket is Assigned; open the AI Triage panel; open the assignee email and click "Open ticket in SESAP".</li>
+</ol>
+
+<p class="small" style="margin-top:22px; border-top:1px solid #e5e7eb; padding-top:10px">
+SESAP — Stanbic IBTC Enterprise Support &amp; Automation Platform · UiPath End‑to‑End Orchestration Challenge submission.
+</p>
+
+</body>
+</html>

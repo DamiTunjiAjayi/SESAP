@@ -1,0 +1,125 @@
+<title>Data Fabric — Ticket Entity Schema</title>
+<style>
+  :root{
+    --bg:#f5f7fa; --surface:#ffffff; --surface-2:#eef2f7; --ink:#0f1a2b; --ink-2:#26364b;
+    --muted:#586576; --line:#d7dfea; --accent:#0057b8; --accent-soft:#e7f0fb;
+    --good:#137a3a; --good-soft:#e2f2e8; --amber:#8a5200; --amber-soft:#fbeeda;
+    --violet:#5b3fb0; --violet-soft:#ece7fb; --slate:#476083; --slate-soft:#e8eef6;
+    --radius:14px; --maxw:900px;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans);
+    font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:44px 22px 80px}
+
+  .head{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:24px 26px; margin-bottom:26px}
+  .eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); margin:0 0 10px}
+  h1{margin:0 0 6px; font-size:28px; font-weight:820; letter-spacing:-.02em}
+  h1 code{font-family:var(--mono); font-size:.8em; background:var(--accent-soft); color:var(--accent);
+    padding:2px 9px; border-radius:7px; font-weight:700}
+  .desc{color:var(--ink-2); margin:8px 0 16px; font-size:15px}
+  .meta{display:flex; flex-wrap:wrap; gap:10px 20px; font-size:12.5px; color:var(--muted);
+    font-family:var(--mono); border-top:1px solid var(--line); padding-top:14px}
+  .meta b{color:var(--ink)}
+
+  h2{font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted);
+    font-family:var(--mono); font-weight:600; margin:30px 0 12px}
+
+  .tbl{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+  .hrow, .row{display:grid; grid-template-columns:1.4fr 1.2fr 0.5fr 2fr; gap:14px; padding:11px 20px; align-items:center}
+  .hrow{background:var(--surface-2); font-size:11px; text-transform:uppercase; letter-spacing:.05em;
+    color:var(--muted); font-weight:700}
+  .row{border-top:1px solid var(--line); font-size:14px}
+  .row.hl{background:var(--good-soft)}
+  .fname{font-family:var(--mono); font-weight:650; color:var(--ink); font-size:13.5px; display:flex; align-items:center; gap:7px}
+  .keyic{color:var(--accent); font-size:11px}
+  .ty{font-family:var(--mono); font-size:11px; font-weight:600; padding:3px 8px; border-radius:6px;
+    background:var(--slate-soft); color:var(--slate); width:fit-content; white-space:nowrap}
+  .ty.str{background:var(--accent-soft); color:var(--accent)}
+  .ty.txt{background:var(--violet-soft); color:var(--violet)}
+  .ty.dt{background:var(--amber-soft); color:var(--amber)}
+  .ty.rel{background:var(--slate-soft); color:var(--slate)}
+  .req{font-size:11px; font-weight:700; color:var(--accent); font-family:var(--mono)}
+  .note{color:var(--ink-2); font-size:13px}
+  .note .wb{color:var(--good); font-weight:700}
+  @media (max-width:640px){
+    .hrow{display:none}
+    .row{grid-template-columns:1fr; gap:4px; padding:14px 18px}
+    .row .note:empty{display:none}
+  }
+
+  .legend{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px}
+  .lg{font-size:12px; font-family:var(--mono); padding:4px 9px; border-radius:6px; border:1px solid var(--line)}
+  .foot{margin-top:30px; padding:16px 20px; background:var(--good-soft);
+    border:1px solid color-mix(in srgb,var(--good) 25%,var(--line)); border-radius:12px; font-size:14px; color:var(--ink-2)}
+  .foot b{color:var(--good)}
+  .capt{color:var(--muted); font-size:12.5px; text-align:center; margin-top:26px}
+  @media print{
+    *{ -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+    @page{ margin:12mm; }
+    .tbl,.head,.foot{ break-inside:avoid; }
+  }
+</style>
+
+<div class="wrap">
+  <div class="head">
+    <p class="eyebrow">UiPath Data Fabric · System of record</p>
+    <h1><code>Ticket</code> entity</h1>
+    <p class="desc">SESAP support tickets. New submissions land unassigned for triage; the robot writes the assignment back during orchestration.</p>
+    <div class="meta">
+      <span><b>Entity id</b> &nbsp;ca14332a-0081-f111-b338-000d3ab4d3b7</span>
+      <span><b>Fields</b> &nbsp;24 &nbsp;(19 business · 5 system)</span>
+      <span><b>Tenant</b> &nbsp;stanbgdgzsbd / DefaultTenant</span>
+    </div>
+  </div>
+
+  <h2>Business fields · 19</h2>
+  <div class="tbl">
+    <div class="hrow"><span>Field</span><span>Type</span><span>Req</span><span>Notes</span></div>
+    <div class="row"><span class="fname"><span class="keyic">◆</span>Ref</span><span class="ty str">STRING</span><span class="req">REQ · UQ</span><span class="note">Human ref, e.g. <code>SESAP-1042</code></span></div>
+    <div class="row"><span class="fname">Subject</span><span class="ty str">STRING</span><span class="req">REQ</span><span class="note">Ticket title</span></div>
+    <div class="row"><span class="fname">Description</span><span class="ty txt">MULTILINE_TEXT</span><span class="req"></span><span class="note">Full detail</span></div>
+    <div class="row"><span class="fname">Requester</span><span class="ty str">STRING</span><span class="req"></span><span class="note">Who raised it</span></div>
+    <div class="row"><span class="fname">RequesterEmail</span><span class="ty str">STRING</span><span class="req"></span><span class="note">Notification recipient</span></div>
+    <div class="row"><span class="fname">Category</span><span class="ty str">STRING</span><span class="req"></span><span class="note">incident / request …</span></div>
+    <div class="row"><span class="fname">SubCategory</span><span class="ty str">STRING</span><span class="req"></span><span class="note"></span></div>
+    <div class="row"><span class="fname">Department</span><span class="ty str">STRING</span><span class="req"></span><span class="note"></span></div>
+    <div class="row"><span class="fname">Channel</span><span class="ty str">STRING</span><span class="req"></span><span class="note">Portal / Email / …</span></div>
+    <div class="row"><span class="fname">Team</span><span class="ty str">STRING</span><span class="req"></span><span class="note">Set during routing</span></div>
+    <div class="row"><span class="fname">BusinessService</span><span class="ty str">STRING</span><span class="req"></span><span class="note"></span></div>
+    <div class="row"><span class="fname">RiskLevel</span><span class="ty str">STRING</span><span class="req"></span><span class="note">Drives the Maestro auto‑vs‑manual gateway</span></div>
+    <div class="row"><span class="fname">Priority</span><span class="ty str">STRING</span><span class="req"></span><span class="note">low / medium / high / urgent</span></div>
+    <div class="row"><span class="fname">Status</span><span class="ty str">STRING</span><span class="req"></span><span class="note">open / in&nbsp;progress / resolved / closed</span></div>
+    <div class="row hl"><span class="fname">AssignedTo</span><span class="ty str">STRING</span><span class="req"></span><span class="note"><span class="wb">Written by the RPA robot</span> — the engineer</span></div>
+    <div class="row hl"><span class="fname">AssignmentStatus</span><span class="ty str">STRING</span><span class="req"></span><span class="note"><span class="wb">Write‑back proof:</span> Unassigned → Assigned</span></div>
+    <div class="row"><span class="fname">Tags</span><span class="ty str">STRING</span><span class="req"></span><span class="note">Comma‑separated</span></div>
+    <div class="row"><span class="fname">Source</span><span class="ty str">STRING</span><span class="req"></span><span class="note"><code>SESAP</code></span></div>
+    <div class="row"><span class="fname">CreatedAt</span><span class="ty dt">DATETIME</span><span class="req"></span><span class="note">App‑set ISO timestamp · SLA baseline</span></div>
+  </div>
+
+  <h2>System fields · 5 (managed by Data Service)</h2>
+  <div class="tbl">
+    <div class="hrow"><span>Field</span><span>Type</span><span>Req</span><span>Notes</span></div>
+    <div class="row"><span class="fname"><span class="keyic">◆</span>Id</span><span class="ty rel">UUID</span><span class="req">PK</span><span class="note">Primary key</span></div>
+    <div class="row"><span class="fname">CreatedBy</span><span class="ty rel">RELATIONSHIP</span><span class="req"></span><span class="note">User</span></div>
+    <div class="row"><span class="fname">CreateTime</span><span class="ty dt">DATETIME_WITH_TZ</span><span class="req"></span><span class="note">Record created</span></div>
+    <div class="row hl"><span class="fname">UpdateTime</span><span class="ty dt">DATETIME_WITH_TZ</span><span class="req"></span><span class="note"><span class="wb">Powers avg resolution time</span> — advances on write‑back</span></div>
+    <div class="row"><span class="fname">UpdatedBy</span><span class="ty rel">RELATIONSHIP</span><span class="req"></span><span class="note">User</span></div>
+  </div>
+
+  <div class="legend">
+    <span class="lg" style="background:var(--good-soft);color:var(--good)">green row = write‑back / analytics field</span>
+    <span class="lg">◆ = key/unique</span>
+    <span class="lg">REQ = required</span>
+  </div>
+
+  <div class="foot">
+    <b>Baseline 4.2 satisfied:</b> the minimum fields (ID, subject, description, priority, status, assignee, created date) are all present, and <code>AssignmentStatus</code> is the status field the automation updates to prove the write‑back loop.
+  </div>
+
+  <p class="capt">Exported live via <code>scripts/describe-entity.mjs</code> · UiPath Data Fabric</p>
+</div>

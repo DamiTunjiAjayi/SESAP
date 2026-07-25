@@ -1,0 +1,260 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Main" mva:VisualBasic.Settings="{x:Null}"
+xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
+xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"
+xmlns:uda="clr-namespace:UiPath.DataService.Activities;assembly=UiPath.DataService.Activities.Core"
+xmlns:uga="clr-namespace:UiPath.GSuite.Activities;assembly=UiPath.GSuite.Activities"
+xmlns:local="clr-namespace:TicketAutomation;assembly=DataService.TicketAutomation"
+xmlns:ui="http://schemas.uipath.com/workflow/activities"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <x:Members>
+        <x:Property Name="out_AssignedCount" Type="OutArgument(x:Int32)" />
+        <x:Property Name="in_Stage" Type="InArgument(x:String)" />
+        <x:Property Name="in_Ref" Type="InArgument(x:String)" />
+        <x:Property Name="in_Subject" Type="InArgument(x:String)" />
+        <x:Property Name="in_RequesterEmail" Type="InArgument(x:String)" />
+        <x:Property Name="in_Assignee" Type="InArgument(x:String)" />
+        <x:Property Name="in_Priority" Type="InArgument(x:String)" />
+        <x:Property Name="out_Sent" Type="OutArgument(x:Boolean)" />
+    </x:Members>
+    <TextExpression.NamespacesForImplementation>
+        <sco:Collection x:TypeArguments="x:String">
+            <x:String>System.Activities</x:String>
+            <x:String>System.Activities.Statements</x:String>
+            <x:String>Microsoft.VisualBasic</x:String>
+            <x:String>Microsoft.VisualBasic.Activities</x:String>
+            <x:String>System</x:String>
+            <x:String>System.Collections.Generic</x:String>
+            <x:String>System.Linq</x:String>
+            <x:String>UiPath.Core</x:String>
+            <x:String>UiPath.Core.Activities</x:String>
+            <x:String>TicketAutomation</x:String>
+        </sco:Collection>
+    </TextExpression.NamespacesForImplementation>
+    <TextExpression.ReferencesForImplementation>
+        <sco:Collection x:TypeArguments="AssemblyReference">
+            <AssemblyReference>System.Activities</AssemblyReference>
+            <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+            <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+            <AssemblyReference>mscorlib</AssemblyReference>
+            <AssemblyReference>System</AssemblyReference>
+            <AssemblyReference>System.Linq</AssemblyReference>
+            <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+            <AssemblyReference>UiPath.DataService.Activities.Core</AssemblyReference>
+            <AssemblyReference>UiPath.GSuite.Activities</AssemblyReference>
+            <AssemblyReference>DataService.TicketAutomation</AssemblyReference>
+            <AssemblyReference>System.Net.Http</AssemblyReference>
+            <AssemblyReference>Newtonsoft.Json</AssemblyReference>
+        </sco:Collection>
+    </TextExpression.ReferencesForImplementation>
+    <Sequence DisplayName="SESAP Ticket Automation" sap2010:WorkflowViewState.IdRef="Sequence_Main">
+        <sap2010:WorkflowViewState.ViewStateManager>
+            <sap2010:ViewStateManager />
+        </sap2010:WorkflowViewState.ViewStateManager>
+        <Sequence.Variables>
+            <Variable x:TypeArguments="scg:IList(local:Ticket)" Name="allTickets" />
+            <Variable x:TypeArguments="x:Int64" Name="totalCount" />
+            <Variable x:TypeArguments="x:String" Name="team" />
+            <Variable x:TypeArguments="x:String" Name="assignee" />
+            <Variable x:TypeArguments="x:String" Name="accent" />
+            <Variable x:TypeArguments="x:String" Name="badge" />
+            <Variable x:TypeArguments="x:String" Name="headline" />
+            <Variable x:TypeArguments="x:String" Name="intro" />
+            <Variable x:TypeArguments="x:String" Name="body" />
+            <Variable x:TypeArguments="x:String" Name="apiKey" />
+            <Variable x:TypeArguments="x:Object" Name="assetVal" />
+            <Variable x:TypeArguments="x:String" Name="cat" />
+            <Variable x:TypeArguments="x:String" Name="aiCategory" />
+            <Variable x:TypeArguments="x:String" Name="aiPriority" />
+            <Variable x:TypeArguments="x:String" Name="aiSummary" />
+            <Variable x:TypeArguments="x:String" Name="aiRecommendation" />
+            <Variable x:TypeArguments="x:String" Name="bodyReq" />
+            <Variable x:TypeArguments="x:String" Name="bodyAgent" />
+        </Sequence.Variables>
+
+        <If Condition="[Not String.IsNullOrEmpty(in_Stage)]" sap2010:WorkflowViewState.IdRef="If_Mode" DisplayName="Lifecycle email mode?">
+            <If.Then>
+                <Sequence DisplayName="Send lifecycle email" sap2010:WorkflowViewState.IdRef="Seq_Email">
+                    <ui:LogMessage sap2010:WorkflowViewState.IdRef="Log_Life" Level="Info" Message="[&quot;[SESAP] Lifecycle email: &quot; + in_Stage + &quot; for &quot; + in_Ref]" />
+                    <Assign sap2010:WorkflowViewState.IdRef="Assign_Accent">
+                        <Assign.To><OutArgument x:TypeArguments="x:String">[accent]</OutArgument></Assign.To>
+                        <Assign.Value><InArgument x:TypeArguments="x:String"><![CDATA[[If(in_Stage = "sla", "#b91c1c", If(in_Stage = "escalated", "#b91c1c", If(in_Stage = "resolved", "#16a34a", If(in_Stage = "closed", "#64748b", If(in_Stage = "approval", "#b45309", If(in_Stage = "rejected", "#b91c1c", "#0057b8"))))))]]]></InArgument></Assign.Value>
+                    </Assign>
+                    <Assign sap2010:WorkflowViewState.IdRef="Assign_Badge">
+                        <Assign.To><OutArgument x:TypeArguments="x:String">[badge]</OutArgument></Assign.To>
+                        <Assign.Value><InArgument x:TypeArguments="x:String"><![CDATA[[If(in_Stage = "sla", "SLA breach", If(in_Stage = "escalated", "Escalated", If(in_Stage = "resolved", "Resolved", If(in_Stage = "closed", "Closed", If(in_Stage = "approval", "Approval needed", If(in_Stage = "approved", "Approved", If(in_Stage = "rejected", "Rejected", If(in_Stage = "assigned", "Assigned", "Received"))))))))]]]></InArgument></Assign.Value>
+                    </Assign>
+                    <Assign sap2010:WorkflowViewState.IdRef="Assign_Headline">
+                        <Assign.To><OutArgument x:TypeArguments="x:String">[headline]</OutArgument></Assign.To>
+                        <Assign.Value><InArgument x:TypeArguments="x:String"><![CDATA[[If(in_Stage = "sla", "A ticket has breached its SLA", If(in_Stage = "escalated", "Your ticket has been escalated", If(in_Stage = "resolved", "Your ticket has been resolved", If(in_Stage = "closed", "Your ticket has been closed", If(in_Stage = "approval", "A ticket needs your approval", If(in_Stage = "approved", "Your request has been approved", If(in_Stage = "rejected", "Your request was returned", If(in_Stage = "assigned", "Your ticket has been assigned to a specialist", "We have received your ticket"))))))))]]]></InArgument></Assign.Value>
+                    </Assign>
+                    <Assign sap2010:WorkflowViewState.IdRef="Assign_Intro">
+                        <Assign.To><OutArgument x:TypeArguments="x:String">[intro]</OutArgument></Assign.To>
+                        <Assign.Value><InArgument x:TypeArguments="x:String"><![CDATA[[If(in_Stage = "sla", "This ticket exceeded its SLA target and was auto-escalated to Urgent. Please review and reassign if needed.", If(in_Stage = "escalated", "This ticket has been escalated for priority handling and is receiving urgent attention.", If(in_Stage = "resolved", "Good news - your ticket has been resolved. If the issue persists, reply to this email to reopen it.", If(in_Stage = "closed", "Your ticket is now closed. Thank you for using Stanbic IBTC support.", If(in_Stage = "approval", "A ticket is awaiting your approval. Please review it and approve or reject it in SESAP.", If(in_Stage = "approved", "Your request has been approved and is now proceeding.", If(in_Stage = "rejected", "Your request was reviewed and returned for changes. Please review and resubmit in SESAP.", If(in_Stage = "assigned", "Your request is now with a specialist and is being worked on.", "Thanks for contacting Stanbic IBTC support. Your ticket has been logged and will be triaged shortly."))))))))]]]></InArgument></Assign.Value>
+                    </Assign>
+                    <Assign sap2010:WorkflowViewState.IdRef="Assign_Body">
+                        <Assign.To><OutArgument x:TypeArguments="x:String">[body]</OutArgument></Assign.To>
+                        <Assign.Value><InArgument x:TypeArguments="x:String"><![CDATA[["<div style='font-family:Segoe UI,Arial,sans-serif;max-width:540px;margin:0 auto;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;background:#ffffff'><div style='background:" + accent + ";color:#ffffff;padding:18px 22px'><div style='font-size:18px;font-weight:700'>Stanbic IBTC  |  SESAP</div><div style='font-size:12px;opacity:0.85;margin-top:2px'>Enterprise Support and Automation</div></div><div style='padding:24px 22px'><span style='display:inline-block;background:#f1f5f9;color:#334155;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;margin-bottom:12px'>" + badge + "</span><div style='font-size:17px;font-weight:600;color:#111827;margin-bottom:8px'>" + headline + "</div><div style='font-size:14px;color:#4b5563;line-height:1.5;margin-bottom:18px'>" + intro + "</div><table style='width:100%;font-size:13px;color:#374151;border-collapse:collapse'><tr><td style='padding:8px 0;color:#9ca3af;width:120px'>Ticket</td><td style='padding:8px 0;font-weight:600'>" + in_Ref + "</td></tr><tr><td style='padding:8px 0;color:#9ca3af'>Subject</td><td style='padding:8px 0'>" + in_Subject + "</td></tr><tr><td style='padding:8px 0;color:#9ca3af'>Priority</td><td style='padding:8px 0'><span style='background:#fff7ed;color:#c2410c;padding:2px 9px;border-radius:20px;font-size:12px'>" + in_Priority + "</span></td></tr></table><div style='margin-top:22px'><a href='https://stanbgdgzsbd.uipath.host/sesap-support-platform?ticket=" + in_Ref + "' style='display:inline-block;background:" + accent + ";color:#ffffff;text-decoration:none;padding:11px 22px;border-radius:8px;font-size:13px;font-weight:600'>Open ticket in SESAP</a></div></div><div style='background:#f8fafc;border-top:1px solid #eef2f7;padding:14px 22px;font-size:11px;color:#94a3b8'>Automated by SESAP  -  UiPath Orchestration.</div></div>"]]]></InArgument></Assign.Value>
+                    </Assign>
+                    <uga:SendEmailConnections
+                        ContinueOnError="True"
+                        DisplayName="Send lifecycle email (Gmail)"
+                        ConnectionId="90afc2de-c197-4306-92c1-1927a32cd42c"
+                        UseConnectionService="True"
+                        InputType="HTML"
+                        SaveAsDraft="False"
+                        Importance="Normal"
+                        Body="[body]"
+                        To="[New String(){If(String.IsNullOrEmpty(in_RequesterEmail), &quot;damilaretunjiajayi+requester@gmail.com&quot;, in_RequesterEmail)}]"
+                        Cc="[New String(){&quot;damilaretunjiajayi@gmail.com&quot;}]"
+                        sap2010:WorkflowViewState.IdRef="SendEmail_Life">
+                        <uga:SendEmailConnections.Subject>
+                            <InArgument x:TypeArguments="x:String"><![CDATA[["[SESAP] " + badge + ": " + in_Ref]]]></InArgument>
+                        </uga:SendEmailConnections.Subject>
+                    </uga:SendEmailConnections>
+                    <Assign sap2010:WorkflowViewState.IdRef="Assign_Sent">
+                        <Assign.To><OutArgument x:TypeArguments="x:Boolean">[out_Sent]</OutArgument></Assign.To>
+                        <Assign.Value><InArgument x:TypeArguments="x:Boolean">True</InArgument></Assign.Value>
+                    </Assign>
+                </Sequence>
+            </If.Then>
+            <If.Else>
+                <Sequence DisplayName="Batch auto-assign" sap2010:WorkflowViewState.IdRef="Seq_Batch">
+                    <ui:LogMessage sap2010:WorkflowViewState.IdRef="Log_Start" Level="Info" Message="[&quot;[SESAP] Auto-assign run started&quot;]" />
+                    <Assign sap2010:WorkflowViewState.IdRef="Assign_InitCount">
+                        <Assign.To><OutArgument x:TypeArguments="x:Int32">[out_AssignedCount]</OutArgument></Assign.To>
+                        <Assign.Value><InArgument x:TypeArguments="x:Int32">0</InArgument></Assign.Value>
+                    </Assign>
+                    <uda:QueryEntityRecords x:TypeArguments="local:Ticket"
+                        ContinueOnError="False"
+                        DisplayName="Query All Tickets"
+                        EntityId="ca14332a-0081-f111-b338-000d3ab4d3b7"
+                        ExpansionDepth="1"
+                        Top="1000"
+                        Skip="0"
+                        SortAscending="True"
+                        OutputRecords="[allTickets]"
+                        TotalRecords="[totalCount]"
+                        TimeoutInMs="30000" />
+                    <ui:LogMessage sap2010:WorkflowViewState.IdRef="Log_Loaded" Level="Info" Message="[&quot;[SESAP] Loaded &quot; + totalCount.ToString() + &quot; ticket(s) from Data Fabric&quot;]" />
+                    <ui:GetRobotAsset AssetName="SESAP_Anthropic_Key" sap2010:WorkflowViewState.IdRef="GetAsset_Key">
+                        <ui:GetRobotAsset.Value>
+                            <OutArgument x:TypeArguments="x:Object">[assetVal]</OutArgument>
+                        </ui:GetRobotAsset.Value>
+                    </ui:GetRobotAsset>
+                    <Assign sap2010:WorkflowViewState.IdRef="Assign_ApiKey">
+                        <Assign.To><OutArgument x:TypeArguments="x:String">[apiKey]</OutArgument></Assign.To>
+                        <Assign.Value><InArgument x:TypeArguments="x:String">[If(assetVal Is Nothing, "", assetVal.ToString())]</InArgument></Assign.Value>
+                    </Assign>
+                    <ForEach x:TypeArguments="local:Ticket" Values="[allTickets]" sap2010:WorkflowViewState.IdRef="ForEach_Tickets" DisplayName="For each ticket">
+                        <ActivityAction x:TypeArguments="local:Ticket">
+                            <ActivityAction.Argument>
+                                <DelegateInArgument x:TypeArguments="local:Ticket" Name="t" />
+                            </ActivityAction.Argument>
+                            <If Condition="[t.AssignmentStatus = &quot;Unassigned&quot;]" sap2010:WorkflowViewState.IdRef="If_Unassigned" DisplayName="Unassigned?">
+                                <If.Then>
+                                    <Sequence DisplayName="Route and assign" sap2010:WorkflowViewState.IdRef="Seq_Assign">
+                                        <ui:InvokeCode sap2010:WorkflowViewState.IdRef="InvokeCode_AI" DisplayName="AI triage (Claude)">
+                                            <ui:InvokeCode.Code><![CDATA[Try
+Dim pr As String = "You are a bank support-desk triage agent. Read the ticket and reply with ONLY minified JSON (no prose, no code fence) with keys: category (one of Payments, Digital Banking, Automation / RPA, Infrastructure, General), priority (one of low, medium, high, urgent), summary (max 18 words), recommendation (max 22 words). Subject: " & in_Subject & " Description: " & in_Description
+Dim ro As New Newtonsoft.Json.Linq.JObject()
+ro("model") = "claude-haiku-4-5-20251001"
+ro("max_tokens") = 300
+Dim ar As New Newtonsoft.Json.Linq.JArray()
+Dim mo As New Newtonsoft.Json.Linq.JObject()
+mo("role") = "user"
+mo("content") = pr
+ar.Add(mo)
+ro("messages") = ar
+Dim cl As New System.Net.Http.HttpClient()
+cl.Timeout = TimeSpan.FromSeconds(90)
+Dim rq As New System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Post, "https://api.anthropic.com/v1/messages")
+rq.Headers.TryAddWithoutValidation("x-api-key", in_ApiKey)
+rq.Headers.TryAddWithoutValidation("anthropic-version", "2023-06-01")
+rq.Content = New System.Net.Http.StringContent(ro.ToString(), System.Text.Encoding.UTF8, "application/json")
+Dim rs = cl.SendAsync(rq).Result
+Dim bs As String = rs.Content.ReadAsStringAsync().Result
+Dim rt = Newtonsoft.Json.Linq.JObject.Parse(bs)
+Dim tx As String = rt("content")(0)("text").ToString()
+Dim ia As Integer = tx.IndexOf("{")
+Dim ib As Integer = tx.LastIndexOf("}")
+Dim jr = Newtonsoft.Json.Linq.JObject.Parse(tx.Substring(ia, ib - ia + 1))
+out_Category = jr("category").ToString()
+out_Priority = jr("priority").ToString().ToLower()
+out_Summary = jr("summary").ToString()
+out_Recommendation = jr("recommendation").ToString()
+Catch ex As Exception
+out_Category = in_Fallback
+out_Priority = "medium"
+out_Summary = "AI triage unavailable"
+out_Recommendation = ""
+End Try]]></ui:InvokeCode.Code>
+                                            <ui:InvokeCode.Arguments>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_Subject">[t.Subject]</InArgument>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_Description">[t.Description]</InArgument>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_ApiKey">[apiKey]</InArgument>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_Fallback">[t.Category]</InArgument>
+                                                <OutArgument x:TypeArguments="x:String" x:Key="out_Category">[aiCategory]</OutArgument>
+                                                <OutArgument x:TypeArguments="x:String" x:Key="out_Priority">[aiPriority]</OutArgument>
+                                                <OutArgument x:TypeArguments="x:String" x:Key="out_Summary">[aiSummary]</OutArgument>
+                                                <OutArgument x:TypeArguments="x:String" x:Key="out_Recommendation">[aiRecommendation]</OutArgument>
+                                            </ui:InvokeCode.Arguments>
+                                        </ui:InvokeCode>
+                                        <Assign sap2010:WorkflowViewState.IdRef="Assign_Cat">
+                                            <Assign.To><OutArgument x:TypeArguments="x:String">[cat]</OutArgument></Assign.To>
+                                            <Assign.Value><InArgument x:TypeArguments="x:String">[If(String.IsNullOrEmpty(aiCategory), t.Category, aiCategory)]</InArgument></Assign.Value>
+                                        </Assign>
+                                        <Assign sap2010:WorkflowViewState.IdRef="Assign_Team">
+                                            <Assign.To><OutArgument x:TypeArguments="x:String">[team]</OutArgument></Assign.To>
+                                            <Assign.Value><InArgument x:TypeArguments="x:String"><![CDATA[[If(cat = "Payments", "Payments Operations", If(cat = "Digital Banking", "Tier 2 Support", If(cat = "Automation / RPA", "Automation Team", If(cat = "Infrastructure", "Infrastructure", "Tier 1 Support"))))]]]></InArgument></Assign.Value>
+                                        </Assign>
+                                        <Assign sap2010:WorkflowViewState.IdRef="Assign_Assignee">
+                                            <Assign.To><OutArgument x:TypeArguments="x:String">[assignee]</OutArgument></Assign.To>
+                                            <Assign.Value><InArgument x:TypeArguments="x:String"><![CDATA[[If(team = "Payments Operations", "Ngozi Eze", If(team = "Tier 2 Support", "Kunle Adeyemi", If(team = "Automation Team", "Chidi Okonkwo", If(team = "Infrastructure", "Fatima Sani", "Tobi Martins"))))]]]></InArgument></Assign.Value>
+                                        </Assign>
+                                        <ui:InvokeWorkflowFile sap2010:WorkflowViewState.IdRef="Invoke_Sync" DisplayName="Write assignment to Data Fabric" WorkflowFileName="Integration\SyncToDataFabric.xaml">
+                                            <ui:InvokeWorkflowFile.Arguments>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_Ref">[t.Ref]</InArgument>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_Assignee">[assignee]</InArgument>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_Team">[team]</InArgument>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_AssignmentStatus">Assigned</InArgument>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_Category">[cat]</InArgument>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_Priority">[If(String.IsNullOrEmpty(aiPriority), t.Priority, aiPriority)]</InArgument>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_Summary">[aiSummary]</InArgument>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_Recommendation">[aiRecommendation]</InArgument>
+                                            </ui:InvokeWorkflowFile.Arguments>
+                                        </ui:InvokeWorkflowFile>
+                                        <Assign sap2010:WorkflowViewState.IdRef="Assign_BodyReq">
+                                            <Assign.To><OutArgument x:TypeArguments="x:String">[bodyReq]</OutArgument></Assign.To>
+                                            <Assign.Value><InArgument x:TypeArguments="x:String"><![CDATA[["<div style='font-family:Segoe UI,Arial,sans-serif;max-width:540px;margin:0 auto;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;background:#ffffff'><div style='background:#0057b8;color:#ffffff;padding:18px 22px'><div style='font-size:18px;font-weight:700'>Stanbic IBTC  |  SESAP</div><div style='font-size:12px;opacity:0.85;margin-top:2px'>Enterprise Support and Automation</div></div><div style='padding:24px 22px'><span style='display:inline-block;background:#eef2ff;color:#0057b8;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;margin-bottom:12px'>Update</span><div style='font-size:17px;font-weight:600;color:#111827;margin-bottom:8px'>Your ticket has been assigned</div><div style='font-size:14px;color:#4b5563;line-height:1.5;margin-bottom:18px'>Thanks for contacting Stanbic IBTC support. Your request is now with a specialist and is being worked on.</div><table style='width:100%;font-size:13px;color:#374151;border-collapse:collapse'><tr><td style='padding:8px 0;color:#9ca3af;width:120px'>Ticket</td><td style='padding:8px 0;font-weight:600'>" + t.Ref + "</td></tr><tr><td style='padding:8px 0;color:#9ca3af'>Subject</td><td style='padding:8px 0'>" + t.Subject + "</td></tr><tr><td style='padding:8px 0;color:#9ca3af'>Assigned to</td><td style='padding:8px 0'>" + assignee + " - " + team + "</td></tr></table><div style='margin-top:22px'><a href='https://stanbgdgzsbd.uipath.host/sesap-support-platform?ticket=" + t.Ref + "' style='display:inline-block;background:#0057b8;color:#ffffff;text-decoration:none;padding:11px 22px;border-radius:8px;font-size:13px;font-weight:600'>Open ticket in SESAP</a></div></div><div style='background:#f8fafc;border-top:1px solid #eef2f7;padding:14px 22px;font-size:11px;color:#94a3b8'>Automated by SESAP  -  UiPath Orchestration.</div></div>"]]]></InArgument></Assign.Value>
+                                        </Assign>
+                                        <uga:SendEmailConnections ContinueOnError="True" DisplayName="Email requester (assigned)" ConnectionId="90afc2de-c197-4306-92c1-1927a32cd42c" UseConnectionService="True" InputType="HTML" SaveAsDraft="False" Importance="Normal" Body="[bodyReq]" To="[New String(){If(String.IsNullOrEmpty(t.RequesterEmail), &quot;damilaretunjiajayi+requester@gmail.com&quot;, t.RequesterEmail)}]" Cc="[New String(){&quot;damilaretunjiajayi@gmail.com&quot;}]" sap2010:WorkflowViewState.IdRef="SendEmail_Req">
+                                            <uga:SendEmailConnections.Subject><InArgument x:TypeArguments="x:String"><![CDATA[["[SESAP] Update on your ticket " + t.Ref]]]></InArgument></uga:SendEmailConnections.Subject>
+                                        </uga:SendEmailConnections>
+                                        <Assign sap2010:WorkflowViewState.IdRef="Assign_BodyAgent">
+                                            <Assign.To><OutArgument x:TypeArguments="x:String">[bodyAgent]</OutArgument></Assign.To>
+                                            <Assign.Value><InArgument x:TypeArguments="x:String"><![CDATA[["<div style='font-family:Segoe UI,Arial,sans-serif;max-width:540px;margin:0 auto;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;background:#ffffff'><div style='background:#0f766e;color:#ffffff;padding:18px 22px'><div style='font-size:18px;font-weight:700'>Stanbic IBTC  |  SESAP</div><div style='font-size:12px;opacity:0.85;margin-top:2px'>Enterprise Support and Automation</div></div><div style='padding:24px 22px'><span style='display:inline-block;background:#eef2ff;color:#0f766e;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;margin-bottom:12px'>Action needed</span><div style='font-size:17px;font-weight:600;color:#111827;margin-bottom:8px'>A new ticket has been assigned to you</div><div style='font-size:14px;color:#4b5563;line-height:1.5;margin-bottom:18px'>Please review the details and action it in the SESAP workspace.</div><table style='width:100%;font-size:13px;color:#374151;border-collapse:collapse'><tr><td style='padding:8px 0;color:#9ca3af;width:120px'>Ticket</td><td style='padding:8px 0;font-weight:600'>" + t.Ref + "</td></tr><tr><td style='padding:8px 0;color:#9ca3af'>Subject</td><td style='padding:8px 0'>" + t.Subject + "</td></tr><tr><td style='padding:8px 0;color:#9ca3af'>Requester</td><td style='padding:8px 0'>" + t.Requester + "</td></tr></table><div style='margin-top:22px'><a href='https://stanbgdgzsbd.uipath.host/sesap-support-platform?ticket=" + t.Ref + "' style='display:inline-block;background:#0f766e;color:#ffffff;text-decoration:none;padding:11px 22px;border-radius:8px;font-size:13px;font-weight:600'>Open ticket in SESAP</a></div></div><div style='background:#f8fafc;border-top:1px solid #eef2f7;padding:14px 22px;font-size:11px;color:#94a3b8'>Automated by SESAP  -  UiPath Orchestration.</div></div>"]]]></InArgument></Assign.Value>
+                                        </Assign>
+                                        <uga:SendEmailConnections ContinueOnError="True" DisplayName="Email agent (new assignment)" ConnectionId="90afc2de-c197-4306-92c1-1927a32cd42c" UseConnectionService="True" InputType="HTML" SaveAsDraft="False" Importance="High" Body="[bodyAgent]" To="[New String(){&quot;damilaretunjiajayi+&quot; + assignee.Split(&quot; &quot;c)(0).ToLower() + &quot;@gmail.com&quot;}]" Cc="[New String(){&quot;damilaretunjiajayi@gmail.com&quot;}]" sap2010:WorkflowViewState.IdRef="SendEmail_Agent">
+                                            <uga:SendEmailConnections.Subject><InArgument x:TypeArguments="x:String"><![CDATA[["[SESAP] New assignment: " + t.Ref]]]></InArgument></uga:SendEmailConnections.Subject>
+                                        </uga:SendEmailConnections>
+                                        <Assign sap2010:WorkflowViewState.IdRef="Assign_Bump">
+                                            <Assign.To><OutArgument x:TypeArguments="x:Int32">[out_AssignedCount]</OutArgument></Assign.To>
+                                            <Assign.Value><InArgument x:TypeArguments="x:Int32">[out_AssignedCount + 1]</InArgument></Assign.Value>
+                                        </Assign>
+                                        <ui:LogMessage sap2010:WorkflowViewState.IdRef="Log_Assigned" Level="Info" Message="[&quot;[SESAP] &quot; + t.Ref + &quot; -&gt; &quot; + assignee + &quot; (&quot; + team + &quot;)&quot;]" />
+                                    </Sequence>
+                                </If.Then>
+                            </If>
+                        </ActivityAction>
+                    </ForEach>
+                    <ui:LogMessage sap2010:WorkflowViewState.IdRef="Log_Done" Level="Info" Message="[&quot;[SESAP] Auto-assign complete. Assigned &quot; + out_AssignedCount.ToString() + &quot; ticket(s).&quot;]" />
+                </Sequence>
+            </If.Else>
+        </If>
+    </Sequence>
+</Activity>

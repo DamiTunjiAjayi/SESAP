@@ -1,0 +1,8 @@
+{
+  "scope": "DataFabric.Schema.Read DataFabric.Data.Read DataFabric.Data.Write OR.Execution OR.Folders.Read OR.Jobs OR.Administration",
+  "clientId": "c4260874-f31d-4859-bc69-3acb06123c68",
+  "orgName": "stanbgdgzsbd",
+  "tenantName": "DefaultTenant",
+  "baseUrl": "https://cloud.uipath.com",
+  "redirectUri": "https://stanbgdgzsbd.uipath.host/sesap-support-platform"
+}

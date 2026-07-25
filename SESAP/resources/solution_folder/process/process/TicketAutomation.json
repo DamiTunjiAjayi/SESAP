@@ -1,0 +1,45 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "TicketAutomation",
+    "kind": "process",
+    "type": "process",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "99eb9089-91f6-4a3a-b7c8-e3c29bd6384b",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "TicketAutomation"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "Process",
+      "name": "TicketAutomation",
+      "package": {
+        "key": "bf93342e-ab57-42f1-b85d-8676b81e2d2d"
+      },
+      "packageName": "SESAP.process.TicketAutomation",
+      "jobPriority": "Medium",
+      "jobRecording": "Disabled",
+      "targetFrameworkValue": "Portable",
+      "duration": 40,
+      "frequency": 500,
+      "quality": 100,
+      "remoteControlAccess": "None",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180
+    },
+    "locks": [],
+    "key": "7e89efe6-4aa1-4fad-8d34-d1e21e6c52cc",
+    "files": []
+  }
+}

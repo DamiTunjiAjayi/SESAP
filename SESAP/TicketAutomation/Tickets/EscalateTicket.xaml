@@ -1,0 +1,144 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="EscalateTicket" mva:VisualBasic.Settings="{x:Null}"
+xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
+xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"
+xmlns:uda="clr-namespace:UiPath.DataService.Activities;assembly=UiPath.DataService.Activities.Core"
+xmlns:udam="clr-namespace:UiPath.DataService.Activities.Models;assembly=UiPath.DataService.Activities.Core"
+xmlns:local="clr-namespace:TicketAutomation;assembly=DataService.TicketAutomation"
+xmlns:ui="http://schemas.uipath.com/workflow/activities"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <x:Members>
+        <x:Property Name="in_Ref" Type="InArgument(x:String)" />
+        <x:Property Name="in_CurrentPriority" Type="InArgument(x:String)" />
+        <x:Property Name="in_Reason" Type="InArgument(x:String)" />
+        <x:Property Name="out_NewPriority" Type="OutArgument(x:String)" />
+        <x:Property Name="out_Escalated" Type="OutArgument(x:Boolean)" />
+        <x:Property Name="out_ManagerEmail" Type="OutArgument(x:String)" />
+    </x:Members>
+    <TextExpression.NamespacesForImplementation>
+        <sco:Collection x:TypeArguments="x:String">
+            <x:String>System.Activities</x:String>
+            <x:String>System.Activities.Statements</x:String>
+            <x:String>Microsoft.VisualBasic</x:String>
+            <x:String>Microsoft.VisualBasic.Activities</x:String>
+            <x:String>System</x:String>
+            <x:String>System.Collections.Generic</x:String>
+            <x:String>System.Linq</x:String>
+            <x:String>UiPath.Core</x:String>
+            <x:String>UiPath.Core.Activities</x:String>
+            <x:String>TicketAutomation</x:String>
+        </sco:Collection>
+    </TextExpression.NamespacesForImplementation>
+    <TextExpression.ReferencesForImplementation>
+        <sco:Collection x:TypeArguments="AssemblyReference">
+            <AssemblyReference>System.Activities</AssemblyReference>
+            <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+            <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+            <AssemblyReference>mscorlib</AssemblyReference>
+            <AssemblyReference>System</AssemblyReference>
+            <AssemblyReference>System.Linq</AssemblyReference>
+            <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+            <AssemblyReference>UiPath.DataService.Activities.Core</AssemblyReference>
+            <AssemblyReference>DataService.TicketAutomation</AssemblyReference>
+        </sco:Collection>
+    </TextExpression.ReferencesForImplementation>
+    <Sequence DisplayName="Escalate Ticket" sap2010:WorkflowViewState.IdRef="Sequence_Escalate">
+        <sap2010:WorkflowViewState.ViewStateManager>
+            <sap2010:ViewStateManager />
+        </sap2010:WorkflowViewState.ViewStateManager>
+        <Sequence.Variables>
+            <Variable x:TypeArguments="scg:IList(local:Ticket)" Name="allTickets" />
+            <Variable x:TypeArguments="x:Int64" Name="totalCount" />
+            <Variable x:TypeArguments="local:Ticket" Name="matched" />
+        </Sequence.Variables>
+        <Assign sap2010:WorkflowViewState.IdRef="Assign_NewPriority">
+            <Assign.To>
+                <OutArgument x:TypeArguments="x:String">[out_NewPriority]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+                <InArgument x:TypeArguments="x:String">urgent</InArgument>
+            </Assign.Value>
+        </Assign>
+        <Assign sap2010:WorkflowViewState.IdRef="Assign_ManagerEmail">
+            <Assign.To>
+                <OutArgument x:TypeArguments="x:String">[out_ManagerEmail]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+                <InArgument x:TypeArguments="x:String">operations.manager@example.com</InArgument>
+            </Assign.Value>
+        </Assign>
+        <uda:QueryEntityRecords x:TypeArguments="local:Ticket"
+            ContinueOnError="False"
+            DisplayName="Query Ticket Records"
+            EntityId="ca14332a-0081-f111-b338-000d3ab4d3b7"
+            ExpansionDepth="1"
+            Top="1000"
+            Skip="0"
+            SortAscending="True"
+            OutputRecords="[allTickets]"
+            TotalRecords="[totalCount]"
+            TimeoutInMs="30000" />
+        <Assign sap2010:WorkflowViewState.IdRef="Assign_Match">
+            <Assign.To>
+                <OutArgument x:TypeArguments="local:Ticket">[matched]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+                <InArgument x:TypeArguments="local:Ticket">[allTickets.FirstOrDefault(Function(t) t.Ref = in_Ref)]</InArgument>
+            </Assign.Value>
+        </Assign>
+        <If Condition="[matched IsNot Nothing]" sap2010:WorkflowViewState.IdRef="If_Matched">
+            <If.Then>
+                <Sequence DisplayName="Escalate matched ticket" sap2010:WorkflowViewState.IdRef="Seq_Escalate">
+                    <uda:UpdateEntityRecord x:TypeArguments="local:Ticket"
+                        OutputEntity="{x:Null}"
+                        VisibleDynamicPropertiesInfo="{x:Null}"
+                        ContinueOnError="False"
+                        DisplayName="Update Ticket Priority"
+                        EntityId="ca14332a-0081-f111-b338-000d3ab4d3b7"
+                        ExpansionDepth="1"
+                        RecordId="[matched.Id]"
+                        InputEntityInFieldView="[New Ticket() With {.Id = matched.Id, .Priority = &quot;urgent&quot;}]"
+                        IsInRecordView="[False]"
+                        TimeoutInMs="30000">
+                        <uda:UpdateEntityRecord.State>
+                            <udam:RecordState IsInRecordView="False" RequiredFieldCount="0">
+                                <udam:RecordState.SelectedFields>
+                                    <scg:List x:TypeArguments="udam:DynamicEntityField">
+                                        <udam:DynamicEntityField Id="e014332a-0081-f111-b338-000d3ab4d3b7" IsRequired="False" Name="Priority">
+                                            <udam:DynamicEntityField.ArgumentValue>
+                                                <InArgument x:TypeArguments="x:String">urgent</InArgument>
+                                            </udam:DynamicEntityField.ArgumentValue>
+                                        </udam:DynamicEntityField>
+                                    </scg:List>
+                                </udam:RecordState.SelectedFields>
+                            </udam:RecordState>
+                        </uda:UpdateEntityRecord.State>
+                    </uda:UpdateEntityRecord>
+                    <Assign sap2010:WorkflowViewState.IdRef="Assign_EscTrue">
+                        <Assign.To>
+                            <OutArgument x:TypeArguments="x:Boolean">[out_Escalated]</OutArgument>
+                        </Assign.To>
+                        <Assign.Value>
+                            <InArgument x:TypeArguments="x:Boolean">True</InArgument>
+                        </Assign.Value>
+                    </Assign>
+                    <ui:LogMessage sap2010:WorkflowViewState.IdRef="Log_Esc" Level="Warn" Message="[&quot;[ESCALATE] &quot; + in_Ref + &quot; priority -&gt; urgent. Reason: &quot; + in_Reason + &quot;. Manager notified: &quot; + out_ManagerEmail]" />
+                </Sequence>
+            </If.Then>
+            <If.Else>
+                <Assign sap2010:WorkflowViewState.IdRef="Assign_EscFalse">
+                    <Assign.To>
+                        <OutArgument x:TypeArguments="x:Boolean">[out_Escalated]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                        <InArgument x:TypeArguments="x:Boolean">False</InArgument>
+                    </Assign.Value>
+                </Assign>
+            </If.Else>
+        </If>
+    </Sequence>
+</Activity>

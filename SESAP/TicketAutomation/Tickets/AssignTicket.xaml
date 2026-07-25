@@ -1,0 +1,98 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="AssignTicket" mva:VisualBasic.Settings="{x:Null}"
+xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
+xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+xmlns:ui="http://schemas.uipath.com/workflow/activities"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <x:Members>
+        <x:Property Name="in_Ref" Type="InArgument(x:String)" />
+        <x:Property Name="in_Category" Type="InArgument(x:String)" />
+        <x:Property Name="in_RiskLevel" Type="InArgument(x:String)" />
+        <x:Property Name="out_Team" Type="OutArgument(x:String)" />
+        <x:Property Name="out_Assignee" Type="OutArgument(x:String)" />
+        <x:Property Name="out_AssigneeEmail" Type="OutArgument(x:String)" />
+        <x:Property Name="out_AutoAssigned" Type="OutArgument(x:Boolean)" />
+    </x:Members>
+    <TextExpression.NamespacesForImplementation>
+        <sco:Collection x:TypeArguments="x:String">
+            <x:String>System.Activities</x:String>
+            <x:String>System.Activities.Statements</x:String>
+            <x:String>Microsoft.VisualBasic</x:String>
+            <x:String>Microsoft.VisualBasic.Activities</x:String>
+            <x:String>System</x:String>
+            <x:String>System.Collections.Generic</x:String>
+            <x:String>System.Linq</x:String>
+        </sco:Collection>
+    </TextExpression.NamespacesForImplementation>
+    <TextExpression.ReferencesForImplementation>
+        <sco:Collection x:TypeArguments="AssemblyReference">
+            <AssemblyReference>System.Activities</AssemblyReference>
+            <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+            <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+            <AssemblyReference>mscorlib</AssemblyReference>
+            <AssemblyReference>System</AssemblyReference>
+            <AssemblyReference>System.Linq</AssemblyReference>
+            <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+        </sco:Collection>
+    </TextExpression.ReferencesForImplementation>
+    <Sequence DisplayName="Assign Ticket" sap2010:WorkflowViewState.IdRef="Sequence_Assign">
+        <sap2010:WorkflowViewState.ViewStateManager>
+            <sap2010:ViewStateManager />
+        </sap2010:WorkflowViewState.ViewStateManager>
+        <Assign sap2010:WorkflowViewState.IdRef="Assign_Team">
+            <Assign.To>
+                <OutArgument x:TypeArguments="x:String">[out_Team]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+                <InArgument x:TypeArguments="x:String">[If(in_Category = "Payments", "Payments Operations", If(in_Category = "Digital Banking", "Tier 2 Support", If(in_Category = "Automation / RPA", "Automation Team", If(in_Category = "Infrastructure", "Infrastructure", "Tier 1 Support"))))]</InArgument>
+            </Assign.Value>
+        </Assign>
+        <Assign sap2010:WorkflowViewState.IdRef="Assign_AutoFlag">
+            <Assign.To>
+                <OutArgument x:TypeArguments="x:Boolean">[out_AutoAssigned]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+                <InArgument x:TypeArguments="x:Boolean">[in_RiskLevel &lt;&gt; "High"]</InArgument>
+            </Assign.Value>
+        </Assign>
+        <If Condition="[out_AutoAssigned]" sap2010:WorkflowViewState.IdRef="If_AutoAssign">
+            <If.Then>
+                <Sequence DisplayName="Auto Assign (least load)" sap2010:WorkflowViewState.IdRef="Sequence_AutoAssign">
+                    <Assign sap2010:WorkflowViewState.IdRef="Assign_Engineer">
+                        <Assign.To>
+                            <OutArgument x:TypeArguments="x:String">[out_Assignee]</OutArgument>
+                        </Assign.To>
+                        <Assign.Value>
+                            <InArgument x:TypeArguments="x:String">[If(out_Team = "Payments Operations", "Ngozi Eze", If(out_Team = "Tier 2 Support", "Kunle Adeyemi", If(out_Team = "Automation Team", "Chidi Okonkwo", If(out_Team = "Infrastructure", "Fatima Sani", "Tobi Martins"))))]</InArgument>
+                        </Assign.Value>
+                    </Assign>
+                    <Assign sap2010:WorkflowViewState.IdRef="Assign_EngineerEmail">
+                        <Assign.To>
+                            <OutArgument x:TypeArguments="x:String">[out_AssigneeEmail]</OutArgument>
+                        </Assign.To>
+                        <Assign.Value>
+                            <InArgument x:TypeArguments="x:String">[out_Assignee.ToLower().Replace(" ", ".") + "@example.com"]</InArgument>
+                        </Assign.Value>
+                    </Assign>
+                    <ui:LogMessage sap2010:WorkflowViewState.IdRef="Log_Assigned" Level="Info" Message="[&quot;[ASSIGN] &quot; + in_Ref + &quot; -&gt; &quot; + out_Assignee + &quot; (&quot; + out_Team + &quot;)&quot;]" />
+                </Sequence>
+            </If.Then>
+            <If.Else>
+                <Sequence DisplayName="Manual Assignment Required" sap2010:WorkflowViewState.IdRef="Sequence_ManualAssign">
+                    <Assign sap2010:WorkflowViewState.IdRef="Assign_Unassigned">
+                        <Assign.To>
+                            <OutArgument x:TypeArguments="x:String">[out_Assignee]</OutArgument>
+                        </Assign.To>
+                        <Assign.Value>
+                            <InArgument x:TypeArguments="x:String">Unassigned</InArgument>
+                        </Assign.Value>
+                    </Assign>
+                    <ui:LogMessage sap2010:WorkflowViewState.IdRef="Log_Manual" Level="Warn" Message="[&quot;[ASSIGN] &quot; + in_Ref + &quot; requires MANUAL assignment (risk=&quot; + in_RiskLevel + &quot;)&quot;]" />
+                </Sequence>
+            </If.Else>
+        </If>
+    </Sequence>
+</Activity>

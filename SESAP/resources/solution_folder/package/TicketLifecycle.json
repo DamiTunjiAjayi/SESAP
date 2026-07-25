@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "TicketLifecycle",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "9bfffca7-ce01-4af3-9256-da6ad7e2412c",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "TicketLifecycle"
+    },
+    "locks": [],
+    "key": "fb2d990d-f9d6-4c87-8324-2049dd6e1ee8",
+    "files": []
+  }
+}

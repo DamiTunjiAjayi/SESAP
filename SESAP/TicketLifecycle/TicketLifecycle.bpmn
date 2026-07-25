@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions
+    xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+    xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+    xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+    xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+    xmlns:uipath="http://uipath.org/schema/bpmn"
+    id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn"
+    exporter="UiPath (https://bpmn.uipath.com)" exporterVersion="1.0">
+  <bpmn:process id="Process_1" name="SESAP Ticket Lifecycle" isExecutable="true">
+    <bpmn:extensionElements>
+      <uipath:variables version="v1">
+        <uipath:inputOutput id="Action" name="Action" type="string" elementId="Event_start" default="submit" />
+        <uipath:inputOutput id="Ref" name="Ref" type="string" elementId="Event_start" />
+        <uipath:inputOutput id="ActorRole" name="ActorRole" type="string" elementId="Event_start" default="customer" />
+        <uipath:inputOutput id="Subject" name="Subject" type="string" elementId="Event_start" />
+        <uipath:inputOutput id="Category" name="Category" type="string" elementId="Event_start" />
+        <uipath:inputOutput id="RiskLevel" name="RiskLevel" type="string" elementId="Event_start" default="Low" />
+        <uipath:inputOutput id="Priority" name="Priority" type="string" elementId="Event_start" />
+        <uipath:inputOutput id="Team" name="Team" type="string" elementId="Event_start" />
+        <uipath:inputOutput id="AutoAssignable" name="AutoAssignable" type="string" elementId="Event_start" />
+        <uipath:inputOutput id="Assignee" name="Assignee" type="string" elementId="Event_start" />
+        <uipath:inputOutput id="AssigneeEmail" name="AssigneeEmail" type="string" elementId="Event_start" />
+        <uipath:inputOutput id="LifecycleState" name="LifecycleState" type="string" elementId="Event_start" />
+      </uipath:variables>
+      <uipath:bindings version="v1">
+        <uipath:binding id="biTicketRPA" name="releaseKey" type="string" default="38e6499b-5d0e-48bf-8456-65b37d6689b6" resource="process" resourceKey="38e6499b-5d0e-48bf-8456-65b37d6689b6" propertyAttribute="Key" />
+      </uipath:bindings>
+    </bpmn:extensionElements>
+
+    <bpmn:startEvent id="Event_start" name="Ticket Submitted">
+      <bpmn:extensionElements>
+        <uipath:entryPointId value="f52f5474-21cc-44ad-abda-4c5c2dc311a3" />
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_Start</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:exclusiveGateway id="Gw_Action" name="Action?" default="Flow_Submit">
+      <bpmn:incoming>Flow_Start</bpmn:incoming>
+      <bpmn:outgoing>Flow_Submit</bpmn:outgoing>
+      <bpmn:outgoing>Flow_ActResolve</bpmn:outgoing>
+      <bpmn:outgoing>Flow_ActClose</bpmn:outgoing>
+      <bpmn:outgoing>Flow_ActEscalate</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:exclusiveGateway id="Gw_Actor" name="Actor route?" default="Flow_Staff">
+      <bpmn:incoming>Flow_Submit</bpmn:incoming>
+      <bpmn:outgoing>Flow_Customer</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Staff</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:scriptTask id="Task_Classify" name="Classify Customer Request" scriptFormat="JavaScript">
+      <bpmn:extensionElements>
+        <uipath:mapping version="v1">
+          <uipath:type value="BPMN.Variables" version="v1" />
+          <uipath:output name="category" type="string" source="=result.category" var="Category" custom="true" />
+        </uipath:mapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Customer</bpmn:incoming>
+      <bpmn:outgoing>Flow_Classified</bpmn:outgoing>
+      <bpmn:script><![CDATA[
+var v = (typeof vars !== 'undefined' && vars) ? vars : {};
+var text = (v.Subject || "").toLowerCase();
+var cat = v.Category;
+if (!cat) {
+  if (text.indexOf("card") >= 0 || text.indexOf("transfer") >= 0 || text.indexOf("atm") >= 0) { cat = "Payments"; }
+  else if (text.indexOf("login") >= 0 || text.indexOf("app") >= 0 || text.indexOf("otp") >= 0) { cat = "Digital Banking"; }
+  else if (text.indexOf("robot") >= 0 || text.indexOf("automation") >= 0) { cat = "Automation / RPA"; }
+  else { cat = "Accounts"; }
+}
+return { category: cat };
+]]></bpmn:script>
+    </bpmn:scriptTask>
+
+    <bpmn:scriptTask id="Task_Route" name="Route to Team" scriptFormat="JavaScript">
+      <bpmn:extensionElements>
+        <uipath:mapping version="v1">
+          <uipath:type value="BPMN.Variables" version="v1" />
+          <uipath:output name="team" type="string" source="=result.team" var="Team" custom="true" />
+        </uipath:mapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Classified</bpmn:incoming>
+      <bpmn:incoming>Flow_Staff</bpmn:incoming>
+      <bpmn:outgoing>Flow_Routed</bpmn:outgoing>
+      <bpmn:script><![CDATA[
+var v = (typeof vars !== 'undefined' && vars) ? vars : {};
+var map = {
+  "Payments": "Payments Operations",
+  "Digital Banking": "Tier 2 Support",
+  "Accounts": "Tier 1 Support",
+  "Lending": "Tier 1 Support",
+  "Automation / RPA": "Automation Team",
+  "Infrastructure": "Infrastructure"
+};
+return { team: map[v.Category] || "Tier 1 Support" };
+]]></bpmn:script>
+    </bpmn:scriptTask>
+
+    <bpmn:exclusiveGateway id="Gw_Auto" name="Auto-assignable?" default="Flow_Auto">
+      <bpmn:incoming>Flow_Routed</bpmn:incoming>
+      <bpmn:outgoing>Flow_Manual</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Auto</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:scriptTask id="Task_Assign" name="Assign Ticket" scriptFormat="JavaScript">
+      <bpmn:extensionElements>
+        <uipath:mapping version="v1">
+          <uipath:type value="BPMN.Variables" version="v1" />
+          <uipath:output name="assignee" type="string" source="=result.assignee" var="Assignee" custom="true" />
+        </uipath:mapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Auto</bpmn:incoming>
+      <bpmn:outgoing>Flow_Assigned</bpmn:outgoing>
+      <bpmn:script><![CDATA[
+var v = (typeof vars !== 'undefined' && vars) ? vars : {};
+var engineers = [
+  { name: "Kunle Adeyemi", email: "kunle.adeyemi@example.com", team: "Tier 2 Support", load: 0 },
+  { name: "Emeka Obi", email: "emeka.obi@example.com", team: "Tier 2 Support", load: 0 },
+  { name: "Ngozi Eze", email: "ngozi.eze@example.com", team: "Payments Operations", load: 0 },
+  { name: "Tobi Martins", email: "tobi.martins@example.com", team: "Tier 1 Support", load: 0 },
+  { name: "Chidi Okonkwo", email: "chidi.okonkwo@example.com", team: "Automation Team", load: 0 },
+  { name: "Fatima Sani", email: "fatima.sani@example.com", team: "Infrastructure", load: 0 }
+];
+var team = v.Team;
+var pool = [];
+for (var i = 0; i < engineers.length; i++) {
+  if (engineers[i].team === team) { pool.push(engineers[i]); }
+}
+if (pool.length === 0) { pool = engineers; }
+var pick = pool[0];
+for (var j = 1; j < pool.length; j++) {
+  if (pool[j].load < pick.load) { pick = pool[j]; }
+}
+return { assignee: pick.name };
+]]></bpmn:script>
+    </bpmn:scriptTask>
+
+    <bpmn:serviceTask id="Task_RunRobot" name="Run Auto-Assign Robot">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Orchestrator.StartJob" version="v1" />
+          <uipath:context>
+            <uipath:input name="releaseKey" type="string" value="=bindings.biTicketRPA" />
+            <uipath:input name="name" type="string" value="TicketAutomation" />
+            <uipath:input name="folderId" type="string" value="8066695" />
+          </uipath:context>
+          <uipath:input name="JobArguments" type="json" target="bodyField"><![CDATA[{}]]></uipath:input>
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Assigned</bpmn:incoming>
+      <bpmn:outgoing>Flow_ToEnd</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:scriptTask id="Task_Resolve" name="Resolve Ticket" scriptFormat="JavaScript">
+      <bpmn:extensionElements>
+        <uipath:mapping version="v1">
+          <uipath:type value="BPMN.Variables" version="v1" />
+          <uipath:output name="state" type="string" source="=result.state" var="LifecycleState" custom="true" />
+        </uipath:mapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ActResolve</bpmn:incoming>
+      <bpmn:outgoing>Flow_ResolveEnd</bpmn:outgoing>
+      <bpmn:script><![CDATA[return { state: "resolved" };]]></bpmn:script>
+    </bpmn:scriptTask>
+
+    <bpmn:scriptTask id="Task_Close" name="Close Ticket" scriptFormat="JavaScript">
+      <bpmn:extensionElements>
+        <uipath:mapping version="v1">
+          <uipath:type value="BPMN.Variables" version="v1" />
+          <uipath:output name="state" type="string" source="=result.state" var="LifecycleState" custom="true" />
+        </uipath:mapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ActClose</bpmn:incoming>
+      <bpmn:outgoing>Flow_CloseEnd</bpmn:outgoing>
+      <bpmn:script><![CDATA[return { state: "closed" };]]></bpmn:script>
+    </bpmn:scriptTask>
+
+    <bpmn:scriptTask id="Task_Escalate" name="Escalate Ticket" scriptFormat="JavaScript">
+      <bpmn:extensionElements>
+        <uipath:mapping version="v1">
+          <uipath:type value="BPMN.Variables" version="v1" />
+          <uipath:output name="state" type="string" source="=result.state" var="LifecycleState" custom="true" />
+        </uipath:mapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ActEscalate</bpmn:incoming>
+      <bpmn:outgoing>Flow_EscalateEnd</bpmn:outgoing>
+      <bpmn:script><![CDATA[return { state: "escalated" };]]></bpmn:script>
+    </bpmn:scriptTask>
+
+    <bpmn:endEvent id="End_Assigned" name="Assigned">
+      <bpmn:incoming>Flow_ToEnd</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="End_Manual" name="Manual Assignment">
+      <bpmn:incoming>Flow_Manual</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="End_Resolved" name="Resolved">
+      <bpmn:incoming>Flow_ResolveEnd</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="End_Closed" name="Closed">
+      <bpmn:incoming>Flow_CloseEnd</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="End_Escalated" name="Escalated">
+      <bpmn:incoming>Flow_EscalateEnd</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="Flow_Start" sourceRef="Event_start" targetRef="Gw_Action" />
+    <bpmn:sequenceFlow id="Flow_Submit" name="new ticket" sourceRef="Gw_Action" targetRef="Gw_Actor" />
+    <bpmn:sequenceFlow id="Flow_ActResolve" name="resolve" sourceRef="Gw_Action" targetRef="Task_Resolve">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">=js:vars.Action == "resolve"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_ActClose" name="close" sourceRef="Gw_Action" targetRef="Task_Close">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">=js:vars.Action == "close"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_ActEscalate" name="escalate" sourceRef="Gw_Action" targetRef="Task_Escalate">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">=js:vars.Action == "escalate"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_ResolveEnd" sourceRef="Task_Resolve" targetRef="End_Resolved" />
+    <bpmn:sequenceFlow id="Flow_CloseEnd" sourceRef="Task_Close" targetRef="End_Closed" />
+    <bpmn:sequenceFlow id="Flow_EscalateEnd" sourceRef="Task_Escalate" targetRef="End_Escalated" />
+    <bpmn:sequenceFlow id="Flow_Customer" name="customer" sourceRef="Gw_Actor" targetRef="Task_Classify">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">=js:vars.ActorRole == "customer"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Staff" name="staff / admin" sourceRef="Gw_Actor" targetRef="Task_Route" />
+    <bpmn:sequenceFlow id="Flow_Classified" sourceRef="Task_Classify" targetRef="Task_Route" />
+    <bpmn:sequenceFlow id="Flow_Routed" sourceRef="Task_Route" targetRef="Gw_Auto" />
+    <bpmn:sequenceFlow id="Flow_Manual" name="high risk" sourceRef="Gw_Auto" targetRef="End_Manual">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">=js:vars.RiskLevel == "High"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Auto" name="auto-assign (default)" sourceRef="Gw_Auto" targetRef="Task_Assign" />
+    <bpmn:sequenceFlow id="Flow_Assigned" sourceRef="Task_Assign" targetRef="Task_RunRobot" />
+    <bpmn:sequenceFlow id="Flow_ToEnd" sourceRef="Task_RunRobot" targetRef="End_Assigned" />
+  </bpmn:process>
+
+  <bpmndi:BPMNDiagram id="Diagram_1">
+    <bpmndi:BPMNPlane id="Plane_1" bpmnElement="Process_1">
+      <bpmndi:BPMNShape id="S_Start" bpmnElement="Event_start"><dc:Bounds x="60" y="200" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_GwAction" bpmnElement="Gw_Action"><dc:Bounds x="145" y="193" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_GwActor" bpmnElement="Gw_Actor"><dc:Bounds x="250" y="193" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Classify" bpmnElement="Task_Classify"><dc:Bounds x="350" y="80" width="120" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Route" bpmnElement="Task_Route"><dc:Bounds x="530" y="178" width="120" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_GwAuto" bpmnElement="Gw_Auto"><dc:Bounds x="710" y="193" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Assign" bpmnElement="Task_Assign"><dc:Bounds x="820" y="178" width="140" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_RunRobot" bpmnElement="Task_RunRobot"><dc:Bounds x="1010" y="178" width="150" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_EndAssigned" bpmnElement="End_Assigned"><dc:Bounds x="1220" y="200" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_EndManual" bpmnElement="End_Manual"><dc:Bounds x="820" y="340" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Resolve" bpmnElement="Task_Resolve"><dc:Bounds x="260" y="290" width="120" height="70" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_EndResolved" bpmnElement="End_Resolved"><dc:Bounds x="440" y="307" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Close" bpmnElement="Task_Close"><dc:Bounds x="260" y="390" width="120" height="70" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_EndClosed" bpmnElement="End_Closed"><dc:Bounds x="440" y="407" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Escalate" bpmnElement="Task_Escalate"><dc:Bounds x="260" y="490" width="120" height="70" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_EndEscalated" bpmnElement="End_Escalated"><dc:Bounds x="440" y="507" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="E_Start" bpmnElement="Flow_Start"><di:waypoint x="96" y="218" /><di:waypoint x="145" y="218" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_Submit" bpmnElement="Flow_Submit"><di:waypoint x="195" y="218" /><di:waypoint x="250" y="218" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_ActResolve" bpmnElement="Flow_ActResolve"><di:waypoint x="170" y="243" /><di:waypoint x="170" y="325" /><di:waypoint x="260" y="325" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_ResolveEnd" bpmnElement="Flow_ResolveEnd"><di:waypoint x="380" y="325" /><di:waypoint x="440" y="325" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_ActClose" bpmnElement="Flow_ActClose"><di:waypoint x="170" y="243" /><di:waypoint x="170" y="425" /><di:waypoint x="260" y="425" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_CloseEnd" bpmnElement="Flow_CloseEnd"><di:waypoint x="380" y="425" /><di:waypoint x="440" y="425" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_ActEscalate" bpmnElement="Flow_ActEscalate"><di:waypoint x="170" y="243" /><di:waypoint x="170" y="525" /><di:waypoint x="260" y="525" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_EscalateEnd" bpmnElement="Flow_EscalateEnd"><di:waypoint x="380" y="525" /><di:waypoint x="440" y="525" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_Customer" bpmnElement="Flow_Customer"><di:waypoint x="275" y="193" /><di:waypoint x="275" y="120" /><di:waypoint x="350" y="120" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_Staff" bpmnElement="Flow_Staff"><di:waypoint x="300" y="218" /><di:waypoint x="530" y="218" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_Classified" bpmnElement="Flow_Classified"><di:waypoint x="470" y="120" /><di:waypoint x="590" y="120" /><di:waypoint x="590" y="178" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_Routed" bpmnElement="Flow_Routed"><di:waypoint x="650" y="218" /><di:waypoint x="710" y="218" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_Auto" bpmnElement="Flow_Auto"><di:waypoint x="760" y="218" /><di:waypoint x="820" y="218" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_Manual" bpmnElement="Flow_Manual"><di:waypoint x="735" y="243" /><di:waypoint x="735" y="358" /><di:waypoint x="820" y="358" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_Assigned" bpmnElement="Flow_Assigned"><di:waypoint x="960" y="218" /><di:waypoint x="1010" y="218" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_ToEnd" bpmnElement="Flow_ToEnd"><di:waypoint x="1160" y="218" /><di:waypoint x="1220" y="218" /></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
