@@ -93,7 +93,6 @@ Solution → Studio Web sync: `uip solution upload SESAP --force`.
 
 - 📘 **[Complete System Guide](https://htmlpreview.github.io/?https://github.com/DamiTunjiAjayi/SESAP/blob/main/docs/SESAP_SYSTEM_GUIDE.html)** — every screen, every action and what it fires, the Maestro BPMN element‑by‑element, both RPA modes, the data model, and all integrations
 - 🏦 **[Submission README](https://htmlpreview.github.io/?https://github.com/DamiTunjiAjayi/SESAP/blob/main/docs/SUBMISSION_README.html)** — architecture front door with the diagram
-- 🎬 **[Demo Walkthrough Guide](https://htmlpreview.github.io/?https://github.com/DamiTunjiAjayi/SESAP/blob/main/docs/DEMO_WALKTHROUGH_GUIDE.html)** — the 5–8 min record‑along script
 - 🗃️ **[Data Fabric entity schema (visual)](https://htmlpreview.github.io/?https://github.com/DamiTunjiAjayi/SESAP/blob/main/docs/DATA_FABRIC_ENTITY_SCHEMA.html)** · schema also in [`docs/DATA_FABRIC_SCHEMA.md`](docs/DATA_FABRIC_SCHEMA.md)
 
 **Also in the repo:** [`docs/architecture-diagram.svg`](docs/architecture-diagram.svg) · [`SESAP/TicketLifecycle/TicketLifecycle.bpmn`](SESAP/TicketLifecycle/TicketLifecycle.bpmn) · PDFs of every doc in [`submission/`](submission/) (+ [`submission/0_SUBMISSION_INDEX.md`](submission/0_SUBMISSION_INDEX.md)).

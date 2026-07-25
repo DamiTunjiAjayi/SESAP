@@ -14,3 +14,8 @@ SPECIMEN-id-demo.png
 scratchpad
 tmp
 *.log
+
+# Demo/video recording script — personal, not part of the submission
+docs/DEMO_WALKTHROUGH_GUIDE.html
+docs/DEMO_WALKTHROUGH_GUIDE.pdf
+docs/DEMO_WALKTHROUGH.md
