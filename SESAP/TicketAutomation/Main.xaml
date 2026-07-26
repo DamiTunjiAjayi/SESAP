@@ -206,7 +206,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
                                                 <OutArgument x:TypeArguments="x:String" x:Key="out_ValidationMessage">[validationMsg]</OutArgument>
                                             </ui:InvokeWorkflowFile.Arguments>
                                         </ui:InvokeWorkflowFile>
-                                        <ui:InvokeCode sap2010:WorkflowViewState.IdRef="InvokeCode_AI" DisplayName="AI triage (Claude)">
+                                        <ui:InvokeCode ContinueOnError="True" sap2010:WorkflowViewState.IdRef="InvokeCode_AI" DisplayName="AI triage (Claude)">
                                             <ui:InvokeCode.Code><![CDATA[Try
 Dim pr As String = "You are a bank support-desk triage agent. Read the ticket and reply with ONLY minified JSON (no prose, no code fence) with keys: category (one of Payments, Digital Banking, Automation / RPA, Infrastructure, General), priority (one of low, medium, high, urgent), summary (max 18 words), recommendation (max 22 words). Subject: " & in_Subject & " Description: " & in_Description
 Dim ro As New Newtonsoft.Json.Linq.JObject()
