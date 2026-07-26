@@ -9,7 +9,7 @@ Coded App  →  Maestro (BPMN)  →  RPA robot  →  Data Fabric  ↺  app refle
 ```
 
 > A polished, reading-friendly version of this document — with the architecture diagram — is at
-> **`docs/SUBMISSION_README.html`** (open in any browser). Demo script: **`docs/DEMO_WALKTHROUGH_GUIDE.html`**.
+> **`docs/SUBMISSION_README.html`** (open in any browser).
 
 ---
 
