@@ -74,12 +74,51 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <Variable x:TypeArguments="x:String" Name="aiRecommendation" />
             <Variable x:TypeArguments="x:String" Name="bodyReq" />
             <Variable x:TypeArguments="x:String" Name="bodyAgent" />
+            <Variable x:TypeArguments="x:String" Name="assigneeEmail" />
+            <Variable x:TypeArguments="x:Boolean" Name="autoAssigned" />
+            <Variable x:TypeArguments="x:Boolean" Name="isValid" />
+            <Variable x:TypeArguments="x:String" Name="validationMsg" />
+            <Variable x:TypeArguments="x:Boolean" Name="notifSent" />
+            <Variable x:TypeArguments="x:String" Name="notifBody" />
+            <Variable x:TypeArguments="x:String" Name="auditEntry" />
+            <Variable x:TypeArguments="x:String" Name="lcNewStatus" />
+            <Variable x:TypeArguments="x:String" Name="lcResolvedAt" />
+            <Variable x:TypeArguments="x:String" Name="lcNewPriority" />
+            <Variable x:TypeArguments="x:Boolean" Name="lcEscalated" />
+            <Variable x:TypeArguments="x:String" Name="lcManagerEmail" />
         </Sequence.Variables>
 
         <If Condition="[Not String.IsNullOrEmpty(in_Stage)]" sap2010:WorkflowViewState.IdRef="If_Mode" DisplayName="Lifecycle email mode?">
             <If.Then>
                 <Sequence DisplayName="Send lifecycle email" sap2010:WorkflowViewState.IdRef="Seq_Email">
                     <ui:LogMessage sap2010:WorkflowViewState.IdRef="Log_Life" Level="Info" Message="[&quot;[SESAP] Lifecycle email: &quot; + in_Stage + &quot; for &quot; + in_Ref]" />
+                    <If Condition="[in_Stage = &quot;resolved&quot;]" sap2010:WorkflowViewState.IdRef="If_Resolve" DisplayName="Resolve stage?">
+                        <If.Then>
+                            <ui:InvokeWorkflowFile sap2010:WorkflowViewState.IdRef="Invoke_Resolve" DisplayName="Resolve ticket in Data Fabric" WorkflowFileName="Tickets\ResolveTicket.xaml">
+                                <ui:InvokeWorkflowFile.Arguments>
+                                    <InArgument x:TypeArguments="x:String" x:Key="in_Ref">[in_Ref]</InArgument>
+                                    <InArgument x:TypeArguments="x:String" x:Key="in_ResolutionNote">Resolved via SESAP orchestration</InArgument>
+                                    <InArgument x:TypeArguments="x:String" x:Key="in_RequesterEmail">[in_RequesterEmail]</InArgument>
+                                    <OutArgument x:TypeArguments="x:String" x:Key="out_NewStatus">[lcNewStatus]</OutArgument>
+                                    <OutArgument x:TypeArguments="x:String" x:Key="out_ResolvedAt">[lcResolvedAt]</OutArgument>
+                                </ui:InvokeWorkflowFile.Arguments>
+                            </ui:InvokeWorkflowFile>
+                        </If.Then>
+                    </If>
+                    <If Condition="[in_Stage = &quot;escalated&quot;]" sap2010:WorkflowViewState.IdRef="If_Escalate" DisplayName="Escalate stage?">
+                        <If.Then>
+                            <ui:InvokeWorkflowFile sap2010:WorkflowViewState.IdRef="Invoke_Escalate" DisplayName="Escalate ticket in Data Fabric" WorkflowFileName="Tickets\EscalateTicket.xaml">
+                                <ui:InvokeWorkflowFile.Arguments>
+                                    <InArgument x:TypeArguments="x:String" x:Key="in_Ref">[in_Ref]</InArgument>
+                                    <InArgument x:TypeArguments="x:String" x:Key="in_CurrentPriority">[in_Priority]</InArgument>
+                                    <InArgument x:TypeArguments="x:String" x:Key="in_Reason">Escalated via SESAP orchestration</InArgument>
+                                    <OutArgument x:TypeArguments="x:String" x:Key="out_NewPriority">[lcNewPriority]</OutArgument>
+                                    <OutArgument x:TypeArguments="x:Boolean" x:Key="out_Escalated">[lcEscalated]</OutArgument>
+                                    <OutArgument x:TypeArguments="x:String" x:Key="out_ManagerEmail">[lcManagerEmail]</OutArgument>
+                                </ui:InvokeWorkflowFile.Arguments>
+                            </ui:InvokeWorkflowFile>
+                        </If.Then>
+                    </If>
                     <Assign sap2010:WorkflowViewState.IdRef="Assign_Accent">
                         <Assign.To><OutArgument x:TypeArguments="x:String">[accent]</OutArgument></Assign.To>
                         <Assign.Value><InArgument x:TypeArguments="x:String"><![CDATA[[If(in_Stage = "sla", "#b91c1c", If(in_Stage = "escalated", "#b91c1c", If(in_Stage = "resolved", "#16a34a", If(in_Stage = "closed", "#64748b", If(in_Stage = "approval", "#b45309", If(in_Stage = "rejected", "#b91c1c", "#0057b8"))))))]]]></InArgument></Assign.Value>
@@ -158,6 +197,15 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
                             <If Condition="[t.AssignmentStatus = &quot;Unassigned&quot;]" sap2010:WorkflowViewState.IdRef="If_Unassigned" DisplayName="Unassigned?">
                                 <If.Then>
                                     <Sequence DisplayName="Route and assign" sap2010:WorkflowViewState.IdRef="Seq_Assign">
+                                        <ui:InvokeWorkflowFile sap2010:WorkflowViewState.IdRef="Invoke_Validate" DisplayName="Validate ticket" WorkflowFileName="Helpers\ValidateTicket.xaml">
+                                            <ui:InvokeWorkflowFile.Arguments>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_Ref">[t.Ref]</InArgument>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_Subject">[t.Subject]</InArgument>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_RequesterEmail">[t.RequesterEmail]</InArgument>
+                                                <OutArgument x:TypeArguments="x:Boolean" x:Key="out_IsValid">[isValid]</OutArgument>
+                                                <OutArgument x:TypeArguments="x:String" x:Key="out_ValidationMessage">[validationMsg]</OutArgument>
+                                            </ui:InvokeWorkflowFile.Arguments>
+                                        </ui:InvokeWorkflowFile>
                                         <ui:InvokeCode sap2010:WorkflowViewState.IdRef="InvokeCode_AI" DisplayName="AI triage (Claude)">
                                             <ui:InvokeCode.Code><![CDATA[Try
 Dim pr As String = "You are a bank support-desk triage agent. Read the ticket and reply with ONLY minified JSON (no prose, no code fence) with keys: category (one of Payments, Digital Banking, Automation / RPA, Infrastructure, General), priority (one of low, medium, high, urgent), summary (max 18 words), recommendation (max 22 words). Subject: " & in_Subject & " Description: " & in_Description
@@ -208,20 +256,23 @@ End Try]]></ui:InvokeCode.Code>
                                             <Assign.To><OutArgument x:TypeArguments="x:String">[cat]</OutArgument></Assign.To>
                                             <Assign.Value><InArgument x:TypeArguments="x:String">[If(String.IsNullOrEmpty(aiCategory), t.Category, aiCategory)]</InArgument></Assign.Value>
                                         </Assign>
-                                        <Assign sap2010:WorkflowViewState.IdRef="Assign_Team">
-                                            <Assign.To><OutArgument x:TypeArguments="x:String">[team]</OutArgument></Assign.To>
-                                            <Assign.Value><InArgument x:TypeArguments="x:String"><![CDATA[[If(cat = "Payments", "Payments Operations", If(cat = "Digital Banking", "Tier 2 Support", If(cat = "Automation / RPA", "Automation Team", If(cat = "Infrastructure", "Infrastructure", "Tier 1 Support"))))]]]></InArgument></Assign.Value>
-                                        </Assign>
-                                        <Assign sap2010:WorkflowViewState.IdRef="Assign_Assignee">
-                                            <Assign.To><OutArgument x:TypeArguments="x:String">[assignee]</OutArgument></Assign.To>
-                                            <Assign.Value><InArgument x:TypeArguments="x:String"><![CDATA[[If(team = "Payments Operations", "Ngozi Eze", If(team = "Tier 2 Support", "Kunle Adeyemi", If(team = "Automation Team", "Chidi Okonkwo", If(team = "Infrastructure", "Fatima Sani", "Tobi Martins"))))]]]></InArgument></Assign.Value>
-                                        </Assign>
+                                        <ui:InvokeWorkflowFile sap2010:WorkflowViewState.IdRef="Invoke_Assign" DisplayName="Assign ticket (route + pick engineer)" WorkflowFileName="Tickets\AssignTicket.xaml">
+                                            <ui:InvokeWorkflowFile.Arguments>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_Ref">[t.Ref]</InArgument>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_Category">[cat]</InArgument>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_RiskLevel">[t.RiskLevel]</InArgument>
+                                                <OutArgument x:TypeArguments="x:String" x:Key="out_Team">[team]</OutArgument>
+                                                <OutArgument x:TypeArguments="x:String" x:Key="out_Assignee">[assignee]</OutArgument>
+                                                <OutArgument x:TypeArguments="x:String" x:Key="out_AssigneeEmail">[assigneeEmail]</OutArgument>
+                                                <OutArgument x:TypeArguments="x:Boolean" x:Key="out_AutoAssigned">[autoAssigned]</OutArgument>
+                                            </ui:InvokeWorkflowFile.Arguments>
+                                        </ui:InvokeWorkflowFile>
                                         <ui:InvokeWorkflowFile sap2010:WorkflowViewState.IdRef="Invoke_Sync" DisplayName="Write assignment to Data Fabric" WorkflowFileName="Integration\SyncToDataFabric.xaml">
                                             <ui:InvokeWorkflowFile.Arguments>
                                                 <InArgument x:TypeArguments="x:String" x:Key="in_Ref">[t.Ref]</InArgument>
                                                 <InArgument x:TypeArguments="x:String" x:Key="in_Assignee">[assignee]</InArgument>
                                                 <InArgument x:TypeArguments="x:String" x:Key="in_Team">[team]</InArgument>
-                                                <InArgument x:TypeArguments="x:String" x:Key="in_AssignmentStatus">Assigned</InArgument>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_AssignmentStatus">[If(autoAssigned, "Assigned", "Unassigned")]</InArgument>
                                                 <InArgument x:TypeArguments="x:String" x:Key="in_Category">[cat]</InArgument>
                                                 <InArgument x:TypeArguments="x:String" x:Key="in_Priority">[If(String.IsNullOrEmpty(aiPriority), t.Priority, aiPriority)]</InArgument>
                                                 <InArgument x:TypeArguments="x:String" x:Key="in_Summary">[aiSummary]</InArgument>
@@ -242,6 +293,27 @@ End Try]]></ui:InvokeCode.Code>
                                         <uga:SendEmailConnections ContinueOnError="True" DisplayName="Email agent (new assignment)" ConnectionId="90afc2de-c197-4306-92c1-1927a32cd42c" UseConnectionService="True" InputType="HTML" SaveAsDraft="False" Importance="High" Body="[bodyAgent]" To="[New String(){&quot;damilaretunjiajayi+&quot; + assignee.Split(&quot; &quot;c)(0).ToLower() + &quot;@gmail.com&quot;}]" Cc="[New String(){&quot;damilaretunjiajayi@gmail.com&quot;}]" sap2010:WorkflowViewState.IdRef="SendEmail_Agent">
                                             <uga:SendEmailConnections.Subject><InArgument x:TypeArguments="x:String"><![CDATA[["[SESAP] New assignment: " + t.Ref]]]></InArgument></uga:SendEmailConnections.Subject>
                                         </uga:SendEmailConnections>
+                                        <ui:InvokeWorkflowFile sap2010:WorkflowViewState.IdRef="Invoke_Notify" DisplayName="Send notification (log)" WorkflowFileName="Notifications\SendNotification.xaml">
+                                            <ui:InvokeWorkflowFile.Arguments>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_Ref">[t.Ref]</InArgument>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_RecipientEmail">[t.RequesterEmail]</InArgument>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_RecipientName">[t.Requester]</InArgument>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_NotificationType">assigned</InArgument>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_Subject">[t.Subject]</InArgument>
+                                                <OutArgument x:TypeArguments="x:Boolean" x:Key="out_Sent">[notifSent]</OutArgument>
+                                                <OutArgument x:TypeArguments="x:String" x:Key="out_MessageBody">[notifBody]</OutArgument>
+                                            </ui:InvokeWorkflowFile.Arguments>
+                                        </ui:InvokeWorkflowFile>
+                                        <ui:InvokeWorkflowFile sap2010:WorkflowViewState.IdRef="Invoke_Audit" DisplayName="Write audit log" WorkflowFileName="Audit\WriteAuditLog.xaml">
+                                            <ui:InvokeWorkflowFile.Arguments>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_Ref">[t.Ref]</InArgument>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_Action">Assigned</InArgument>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_ActorRole">System</InArgument>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_OldValue">Unassigned</InArgument>
+                                                <InArgument x:TypeArguments="x:String" x:Key="in_NewValue">[assignee]</InArgument>
+                                                <OutArgument x:TypeArguments="x:String" x:Key="out_AuditEntry">[auditEntry]</OutArgument>
+                                            </ui:InvokeWorkflowFile.Arguments>
+                                        </ui:InvokeWorkflowFile>
                                         <Assign sap2010:WorkflowViewState.IdRef="Assign_Bump">
                                             <Assign.To><OutArgument x:TypeArguments="x:Int32">[out_AssignedCount]</OutArgument></Assign.To>
                                             <Assign.Value><InArgument x:TypeArguments="x:Int32">[out_AssignedCount + 1]</InArgument></Assign.Value>
