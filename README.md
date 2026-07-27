@@ -2,6 +2,10 @@
 
 **UiPath End-to-End Orchestration Challenge — Bank Developer Edition**
 
+### ▶ [**Open the live app**](https://stanbgdgzsbd.uipath.host/sesap-support-platform) &nbsp;·&nbsp; v2.9.19
+
+<sub>Deployed UiPath Coded App — opens in the UiPath tenant (a UiPath sign‑in may be required).</sub>
+
 A UiPath **Coded App** backed by **Data Fabric**, orchestrated by a **Maestro (BPMN)** process, and executed by a published **RPA robot**. A support lead acts on a ticket → Maestro coordinates → the robot does the work and writes back to Data Fabric → the app reflects it.
 
 ```
@@ -54,7 +58,7 @@ Solution → Studio Web sync: `uip solution upload SESAP --force`.
 
 | Resource | Value |
 |---|---|
-| Live app | `https://stanbgdgzsbd.uipath.host/sesap-support-platform` · v2.9.19 |
+| Live app | **[▶ Open the live app](https://stanbgdgzsbd.uipath.host/sesap-support-platform)** · v2.9.19 |
 | Shared folder | `1c313714-4ed8-41a8-91f2-edfa178a3902` |
 | SESAP-Live folder | `c034c633-bf82-47ba-9e35-8955ea38d2b0` |
 | Ticket entity | `ca14332a-0081-f111-b338-000d3ab4d3b7` (24 fields) |
