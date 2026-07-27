@@ -207,40 +207,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
                                             </ui:InvokeWorkflowFile.Arguments>
                                         </ui:InvokeWorkflowFile>
                                         <ui:InvokeCode ContinueOnError="True" sap2010:WorkflowViewState.IdRef="InvokeCode_AI" DisplayName="AI triage (Claude)">
-                                            <ui:InvokeCode.Code><![CDATA[Try
-Dim pr As String = "You are a bank support-desk triage agent. Read the ticket and reply with ONLY minified JSON (no prose, no code fence) with keys: category (one of Payments, Digital Banking, Automation / RPA, Infrastructure, General), priority (one of low, medium, high, urgent), summary (max 18 words), recommendation (max 22 words). Subject: " & in_Subject & " Description: " & in_Description
-Dim ro As New Newtonsoft.Json.Linq.JObject()
-ro("model") = "claude-haiku-4-5-20251001"
-ro("max_tokens") = 300
-Dim ar As New Newtonsoft.Json.Linq.JArray()
-Dim mo As New Newtonsoft.Json.Linq.JObject()
-mo("role") = "user"
-mo("content") = pr
-ar.Add(mo)
-ro("messages") = ar
-Dim cl As New System.Net.Http.HttpClient()
-cl.Timeout = TimeSpan.FromSeconds(90)
-Dim rq As New System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Post, "https://api.anthropic.com/v1/messages")
-rq.Headers.TryAddWithoutValidation("x-api-key", in_ApiKey)
-rq.Headers.TryAddWithoutValidation("anthropic-version", "2023-06-01")
-rq.Content = New System.Net.Http.StringContent(ro.ToString(), System.Text.Encoding.UTF8, "application/json")
-Dim rs = cl.SendAsync(rq).Result
-Dim bs As String = rs.Content.ReadAsStringAsync().Result
-Dim rt = Newtonsoft.Json.Linq.JObject.Parse(bs)
-Dim tx As String = rt("content")(0)("text").ToString()
-Dim ia As Integer = tx.IndexOf("{")
-Dim ib As Integer = tx.LastIndexOf("}")
-Dim jr = Newtonsoft.Json.Linq.JObject.Parse(tx.Substring(ia, ib - ia + 1))
-out_Category = jr("category").ToString()
-out_Priority = jr("priority").ToString().ToLower()
-out_Summary = jr("summary").ToString()
-out_Recommendation = jr("recommendation").ToString()
-Catch ex As Exception
-out_Category = in_Fallback
-out_Priority = "medium"
-out_Summary = "AI triage unavailable"
-out_Recommendation = ""
-End Try]]></ui:InvokeCode.Code>
+                                            <ui:InvokeCode.Code><![CDATA[Dim pr As String = "You are a bank support-desk triage agent. Read the ticket and reply with ONLY minified JSON (no prose, no code fence) with keys: category (one of Payments, Digital Banking, Automation / RPA, Infrastructure, General), priority (one of low, medium, high, urgent), summary (max 18 words), recommendation (max 22 words). Subject: " & in_Subject & " Description: " & in_Description : Dim ro As New Newtonsoft.Json.Linq.JObject() : ro("model") = "claude-haiku-4-5-20251001" : ro("max_tokens") = 300 : Dim ar As New Newtonsoft.Json.Linq.JArray() : Dim mo As New Newtonsoft.Json.Linq.JObject() : mo("role") = "user" : mo("content") = pr : ar.Add(mo) : ro("messages") = ar : Dim cl As New System.Net.Http.HttpClient() : cl.Timeout = TimeSpan.FromSeconds(90) : Dim rq As New System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Post, "https://api.anthropic.com/v1/messages") : rq.Headers.TryAddWithoutValidation("x-api-key", in_ApiKey) : rq.Headers.TryAddWithoutValidation("anthropic-version", "2023-06-01") : rq.Content = New System.Net.Http.StringContent(ro.ToString(), System.Text.Encoding.UTF8, "application/json") : Dim rs = cl.SendAsync(rq).Result : Dim bs As String = rs.Content.ReadAsStringAsync().Result : Dim rt = Newtonsoft.Json.Linq.JObject.Parse(bs) : Dim tx As String = rt("content")(0)("text").ToString() : Dim ia As Integer = tx.IndexOf("{") : Dim ib As Integer = tx.LastIndexOf("}") : Dim jr = Newtonsoft.Json.Linq.JObject.Parse(tx.Substring(ia, ib - ia + 1)) : out_Category = jr("category").ToString() : out_Priority = jr("priority").ToString().ToLower() : out_Summary = jr("summary").ToString() : out_Recommendation = jr("recommendation").ToString()]]></ui:InvokeCode.Code>
                                             <ui:InvokeCode.Arguments>
                                                 <InArgument x:TypeArguments="x:String" x:Key="in_Subject">[t.Subject]</InArgument>
                                                 <InArgument x:TypeArguments="x:String" x:Key="in_Description">[t.Description]</InArgument>

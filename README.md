@@ -58,7 +58,7 @@ Solution → Studio Web sync: `uip solution upload SESAP --force`.
 | Shared folder | `1c313714-4ed8-41a8-91f2-edfa178a3902` |
 | SESAP-Live folder | `c034c633-bf82-47ba-9e35-8955ea38d2b0` |
 | Ticket entity | `ca14332a-0081-f111-b338-000d3ab4d3b7` (24 fields) |
-| RPA release | `SESAP.process.TicketAutomation` v2.0.15 · `38E6499B-5D0E-48BF-8456-65B37D6689B6` |
+| RPA release | `SESAP.process.TicketAutomation` v2.0.16 · `38E6499B-5D0E-48BF-8456-65B37D6689B6` |
 | Maestro process | `TicketLifecycle` · `fedfe5d6-49f8-4cab-9503-d11f2d8ddb81` |
 | Storage bucket | `195596` (ticket attachments) |
 | AI key (asset) | `SESAP_Anthropic_Key` — server-side only, never in repo |
