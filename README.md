@@ -1,4 +1,4 @@
-# SESAP — Stanbic IBTC Enterprise Support & Automation Platform
+# SESAP: Stanbic IBTC Enterprise Support & Automation Platform
 
 **UiPath End-to-End Orchestration Challenge (Bank Developer Edition)**
 
