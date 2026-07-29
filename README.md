@@ -2,7 +2,7 @@
 
 **UiPath End-to-End Orchestration Challenge — Bank Developer Edition**
 
-### ▶ [**Open the live app**](https://stanbgdgzsbd.uipath.host/sesap-support-platform) &nbsp;·&nbsp; 🎬 [**Watch the demo (6 min)**](https://go.screenpal.com/watch/cOitqLnvV8v)
+### ▶ [**Open the live app**](https://stanbgdgzsbd.uipath.host/sesap-support-platform) &nbsp;·&nbsp; 🎬 [**Watch the demo (6 min)**](https://go.screenpal.com/watch/cOitqLnvV8v) &nbsp;·&nbsp; 📦 [**Download project (ZIP)**](https://github.com/DamiTunjiAjayi/SESAP/releases/download/v1.0/SESAP_submission.zip)
 
 <sub>Live app is a deployed UiPath Coded App — opens in the UiPath tenant (a UiPath sign‑in may be required). The demo video needs no sign‑in.</sub>
 
