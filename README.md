@@ -2,9 +2,9 @@
 
 **UiPath End-to-End Orchestration Challenge — Bank Developer Edition**
 
-### ▶ [**Open the live app**](https://stanbgdgzsbd.uipath.host/sesap-support-platform) &nbsp;·&nbsp; v2.9.19
+### ▶ [**Open the live app**](https://stanbgdgzsbd.uipath.host/sesap-support-platform) &nbsp;·&nbsp; 🎬 [**Watch the demo (6 min)**](https://go.screenpal.com/watch/cOitqLnvV8v)
 
-<sub>Deployed UiPath Coded App — opens in the UiPath tenant (a UiPath sign‑in may be required).</sub>
+<sub>Live app is a deployed UiPath Coded App — opens in the UiPath tenant (a UiPath sign‑in may be required). The demo video needs no sign‑in.</sub>
 
 A UiPath **Coded App** backed by **Data Fabric**, orchestrated by a **Maestro (BPMN)** process, and executed by a published **RPA robot**. A support lead acts on a ticket → Maestro coordinates → the robot does the work and writes back to Data Fabric → the app reflects it.
 
