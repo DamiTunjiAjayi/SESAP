@@ -1,43 +1,41 @@
 # SESAP — Stanbic IBTC Enterprise Support & Automation Platform
 
-**UiPath End-to-End Orchestration Challenge — Bank Developer Edition**
+**UiPath End-to-End Orchestration Challenge (Bank Developer Edition)**
 
 ### ▶ [**Open the live app**](https://stanbgdgzsbd.uipath.host/sesap-support-platform) &nbsp;·&nbsp; 🎬 [**Watch the demo (6 min)**](https://go.screenpal.com/watch/cOitqLnvV8v) &nbsp;·&nbsp; 📦 [**Download project (ZIP)**](https://github.com/DamiTunjiAjayi/SESAP/releases/download/v1.0/SESAP_submission.zip)
 
-<sub>Live app is a deployed UiPath Coded App — opens in the UiPath tenant (a UiPath sign‑in may be required). The demo video needs no sign‑in.</sub>
+<sub>The live app is a deployed UiPath Coded App, so it opens inside the UiPath tenant and may ask you to sign in. The demo video needs no sign-in.</sub>
 
-A UiPath **Coded App** backed by **Data Fabric**, orchestrated by a **Maestro (BPMN)** process, and executed by a published **RPA robot**. A support lead acts on a ticket → Maestro coordinates → the robot does the work and writes back to Data Fabric → the app reflects it.
+SESAP is a staff support desk I built end to end on UiPath. Someone on the support team opens a ticket in the app, a Maestro process picks it up and coordinates the lifecycle, an RPA robot does the real work (triage, assignment, notifications), and the result is written back into Data Fabric so the app shows the change almost straight away. What I was really after was getting all four UiPath pieces to genuinely work together as one loop, instead of just sitting next to each other.
 
 ```
-Coded App  →  Maestro (BPMN)  →  RPA robot  →  Data Fabric  ↺  app reflects the change
+Coded App  →  Maestro (BPMN)  →  RPA robot  →  Data Fabric  →  back to the app
 ```
 
-> A polished, reading-friendly version of this document — with the architecture diagram — is at
-> **`docs/SUBMISSION_README.html`** (open in any browser).
+If you'd rather read this in a browser with the architecture diagram, there's an illustrated version at `docs/SUBMISSION_README.html`.
 
----
+## What each piece does
 
-## The four layers
+**The Coded App** is a React and TypeScript dashboard where you view, search, sort, open, create and act on tickets. It talks to Data Fabric through the UiPath TypeScript SDK, and it's the thing that kicks off the orchestration.
 
-| Layer | Role |
-|---|---|
-| **Coded App** | React/TypeScript operational dashboard — view, search, sort, investigate, create, and act on tickets. Reads/writes Data Fabric via the UiPath TypeScript SDK; starts the orchestration. |
-| **Data Fabric** | System of record — the `Ticket` entity (24 fields). `AssignmentStatus` is the field the automation flips (`Unassigned → Assigned`) to prove the write-back loop. |
-| **Maestro (BPMN)** | Orchestration — `TicketLifecycle`: start event, an *Action* gateway (submit / resolve / close / escalate), triage & routing tasks, a risk gateway (high-risk → manual assignment), and end events. Invokes the robot. |
-| **RPA robot** | The hands — `TicketAutomation`: AI triage (categorise / prioritise / summarise / recommend), auto-assignment, Data Fabric write-back, and lifecycle email notifications. |
+**Data Fabric** is the system of record. There's a `Ticket` entity with 24 fields. The one to watch is `AssignmentStatus`, because that's the field the automation changes from `Unassigned` to `Assigned`. It's the simplest way to see that the write-back actually happened.
 
-## How the layers connect
+**Maestro** is the coordinator, a BPMN process called `TicketLifecycle`. It has a start event, a gateway that branches on what you're doing (submit, resolve, close, escalate), triage and routing steps, a risk gateway that sends high-risk items to a person instead of the robot, and end events. It's what invokes the robot.
 
-1. **App → Data Fabric** — creating/editing a ticket writes to the `Ticket` entity (SDK `entities`).
-2. **App → Maestro** — acting on a ticket starts the Maestro process for that action (`processes.start`, ticket context as input args). Gated by a *Live automation* toggle to conserve Robot Units.
-3. **Maestro → RPA** — the BPMN triages/routes, then invokes the `TicketAutomation` job (high-risk branches to manual assignment).
-4. **RPA → AI & email** — the robot calls Claude (keyed by the Orchestrator asset `SESAP_Anthropic_Key`, never in the repo) and emails via Integration Service (Gmail), CC the supervisor.
-5. **RPA → Data Fabric** — writes `AssignmentStatus` `Unassigned → Assigned`; `UpdateTime` advances (powers the resolution-time KPI).
-6. **Data Fabric → App** — the app re-reads the entity and reflects the new status/assignee. Loop closed.
+**The RPA robot** is the hands, a published process called `TicketAutomation`. It runs the AI triage (works out a category, a priority, a short summary and a recommended action), auto-assigns the ticket, writes the outcome back to Data Fabric, and sends the lifecycle emails.
 
-## Setup & run
+## How it all connects
 
-**Coded App** (all three steps required; bump the version each time):
+1. When you create or edit a ticket, the app writes it to the `Ticket` entity in Data Fabric.
+2. When you act on a ticket, the app starts the matching Maestro process and passes the ticket details in. There's a "Live automation" toggle so I don't burn Robot Units while testing.
+3. Maestro triages and routes, then starts the `TicketAutomation` job. High-risk tickets branch off to manual assignment instead.
+4. The robot calls Claude for the triage (the key lives as an Orchestrator asset called `SESAP_Anthropic_Key`, not in the repo) and sends email through the Gmail integration, copying the supervisor.
+5. The robot changes `AssignmentStatus` from `Unassigned` to `Assigned` and bumps `UpdateTime`, which is what feeds the resolution-time figure.
+6. The app re-reads the entity and shows the new status and assignee, which closes the loop.
+
+## Running it yourself
+
+**Coded App** (all three steps, and bump the version each time):
 ```bash
 npm run build
 uip codedapp pack ./dist --name "SESAP Support Platform" --version <NEW> --content-type webapp --main-file index.html
@@ -45,16 +43,16 @@ uip codedapp publish --name "sesapsupportplatform" --version <NEW> --type Web
 uip codedapp deploy --name "SESAP Support Platform" --folder-key <SHARED>
 ```
 
-**RPA robot** (pack → upload → repoint the release):
+**RPA robot** (pack, upload, then repoint the release):
 ```bash
 uip rpa pack SESAP/TicketAutomation ./out --package-id SESAP.process.TicketAutomation --package-version <NEW>
 uip or packages upload ./out/SESAP.process.TicketAutomation.<NEW>.nupkg
 uip or processes update-version <RPA_KEY> --package-version <NEW>
 ```
 
-Solution → Studio Web sync: `uip solution upload SESAP --force`.
+To sync the solution into Studio Web: `uip solution upload SESAP --force`.
 
-## Deployed resources (live)
+## What's deployed
 
 | Resource | Value |
 |---|---|
@@ -65,38 +63,33 @@ Solution → Studio Web sync: `uip solution upload SESAP --force`.
 | RPA release | `SESAP.process.TicketAutomation` v2.0.16 · `38E6499B-5D0E-48BF-8456-65B37D6689B6` |
 | Maestro process | `TicketLifecycle` · `fedfe5d6-49f8-4cab-9503-d11f2d8ddb81` |
 | Storage bucket | `195596` (ticket attachments) |
-| AI key (asset) | `SESAP_Anthropic_Key` — server-side only, never in repo |
+| AI key (asset) | `SESAP_Anthropic_Key` (server-side only, never in the repo) |
 
-## Baseline (Section 4) — all met
+## The core of it
 
-- **4.1 Coded App** — TypeScript app; lists active tickets live from Data Fabric; search & sort; ticket detail; create persists to Data Fabric; in-app actions start the orchestration.
-- **4.2 Data Fabric** — `Ticket` entity with the required fields; `AssignmentStatus` updated by the automation (write-back).
-- **4.3 RPA** — published robot doing real work (AI triage + auto-assign + notify); reads/writes the Ticket entity; invoked by the orchestration.
-- **4.4 Maestro** — start, tasks, gateways, end; models the ticket lifecycle; invokes the RPA workflow; shares Data Fabric state.
-- **4.5 End-to-end** — the full loop works from app action to a Data Fabric write-back the app reflects; demonstrable live/on video.
+The baseline I set out to hit was the full loop, and that part works. The app lists tickets live from Data Fabric with search, sort, detail views and ticket creation that persists, and acting on a ticket starts the orchestration. The `Ticket` entity holds the record, and the automation updates `AssignmentStatus` as the write-back. The published robot does real work (triage, assignment, notifications) and both reads and writes the entity, and Maestro is what invokes it. The Maestro process itself has a start, tasks, gateways and an end, models the ticket lifecycle, and shares Data Fabric state with the robot. Put together, it runs from an action in the app all the way to a Data Fabric write-back the app then reflects, and you can watch that happen in the video.
 
-## Bonus items attempted (Section 5 — requested 30, capped +25)
+## What else I built
 
-| Bonus | Points | How |
-|---|---|---|
-| Agentic / AI triage | +6 | Claude categorises/prioritises/summarises/recommends inside the robot, within the flow |
-| Document IDP | +4 | On-device OCR reads images/ID cards; pdf.js extracts PDF text — read out in the copilot |
-| Human-in-the-loop | +4 | Procurement/internal tickets → supervisor approval, surfaced in the app and by email* |
-| SLA & escalation | +3 | Per-priority SLA timers; overdue → auto-escalate to Urgent + supervisor alert |
-| Role-based views | +3 | Distinct supervisor / agent / customer experiences |
-| Analytics / KPIs | +3 | Open by priority, avg resolution time, SLA compliance, created-vs-resolved trend |
-| Engineering quality | +3 | Automated tests, reusable components, graceful error handling |
-| Notifications | +2 | Real Gmail emails on lifecycle events, CC supervisor |
-| Polished UX | +2 | On-brand banking interface |
+Once the loop worked I kept going, because I wanted it to feel like something a bank could actually use rather than a demo:
 
-\* Human-in-the-loop is an app-and-email approval flow (matching "with the app or email surfacing it"), not a Maestro Action Center user task.
+- **AI triage.** The robot asks Claude to categorise, prioritise, summarise and recommend an action on each ticket, and writes that back onto the record.
+- **Reading documents.** The copilot can read an uploaded image or ID card with on-device OCR, and pull the text out of PDFs.
+- **Approvals.** Procurement and internal tickets go to a supervisor to sign off, surfaced both in the app and by email.
+- **SLA and escalation.** Each priority has its own SLA timer, and anything that runs over is bumped to Urgent with an alert to the supervisor.
+- **Different views for different people.** Supervisors, agents and customers each get their own experience.
+- **Analytics.** Open tickets by priority, average resolution time, SLA compliance, and a created-versus-resolved trend.
+- **Notifications.** Real Gmail emails on the lifecycle events, with the supervisor copied.
+- **The finish.** An on-brand banking interface, plus some tests and reusable components to keep the code honest.
+
+One note on the approvals: I did it as an app-and-email flow rather than a Maestro Action Center user task, which matched how the brief described surfacing it in the app or by email.
 
 ## Documentation
 
-**Rendered visual docs** (open in a browser via htmlpreview):
+If you want to go deeper, these open in a browser:
 
-- 📘 **[Complete System Guide](https://htmlpreview.github.io/?https://github.com/DamiTunjiAjayi/SESAP/blob/main/docs/SESAP_SYSTEM_GUIDE.html)** — every screen, every action and what it fires, the Maestro BPMN element‑by‑element, both RPA modes, the data model, and all integrations
-- 🏦 **[Submission README](https://htmlpreview.github.io/?https://github.com/DamiTunjiAjayi/SESAP/blob/main/docs/SUBMISSION_README.html)** — architecture front door with the diagram
-- 🗃️ **[Data Fabric entity schema (visual)](https://htmlpreview.github.io/?https://github.com/DamiTunjiAjayi/SESAP/blob/main/docs/DATA_FABRIC_ENTITY_SCHEMA.html)** · schema also in [`docs/DATA_FABRIC_SCHEMA.md`](docs/DATA_FABRIC_SCHEMA.md)
+- 📘 **[Complete System Guide](https://htmlpreview.github.io/?https://github.com/DamiTunjiAjayi/SESAP/blob/main/docs/SESAP_SYSTEM_GUIDE.html)** walks every screen, what each action fires, the Maestro process piece by piece, both robot modes, the data model, and the integrations.
+- 🏦 **[Submission README](https://htmlpreview.github.io/?https://github.com/DamiTunjiAjayi/SESAP/blob/main/docs/SUBMISSION_README.html)** is the illustrated front door with the architecture diagram.
+- 🗃️ **[Data Fabric entity schema](https://htmlpreview.github.io/?https://github.com/DamiTunjiAjayi/SESAP/blob/main/docs/DATA_FABRIC_ENTITY_SCHEMA.html)**, also written up in [`docs/DATA_FABRIC_SCHEMA.md`](docs/DATA_FABRIC_SCHEMA.md).
 
-**Also in the repo:** [`docs/architecture-diagram.svg`](docs/architecture-diagram.svg) · [`SESAP/TicketLifecycle/TicketLifecycle.bpmn`](SESAP/TicketLifecycle/TicketLifecycle.bpmn) · PDFs of every doc in [`submission/`](submission/) (+ [`submission/0_SUBMISSION_INDEX.md`](submission/0_SUBMISSION_INDEX.md)).
+You'll also find [`docs/architecture-diagram.svg`](docs/architecture-diagram.svg), the Maestro definition at [`SESAP/TicketLifecycle/TicketLifecycle.bpmn`](SESAP/TicketLifecycle/TicketLifecycle.bpmn), and PDF copies of every document in [`submission/`](submission/).
